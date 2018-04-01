@@ -1,0 +1,32 @@
+﻿using System;
+namespace SynapseModel
+{
+    public class Consumer_Dendrite
+    {
+        public int Id { get; private set; }
+
+        public Consumer_Dendrite(int id)
+        {
+            //Console.WriteLine("Consumer_Dendrite " + id + " is created.");
+            this.Id = id;  
+        }
+
+        public void Work(Dendrite dt, TimeSpan runLength)
+        {
+            DateTime start = DateTime.Now;
+            //Console.WriteLine("Consumer_Dendrite {0} is working...", Id);
+            while (DateTime.Now - start < runLength)
+            {
+                int voltage = dt.TryRemoveFromBuffer();
+                Console.WriteLine("Consumer_Dendrite {0} removed {1} from buffer.", Id, voltage);
+            }//end while
+
+            //Console.WriteLine("Consumer_Dendrite {0} is done.", Id);
+        }//end Work()
+
+        public override String ToString()
+        {
+            return "Consumer_Dendrite " + Id;
+        }
+    }
+}
