@@ -15,7 +15,7 @@ namespace SynapseModel
     public class Dendrite
     {
         public const int RESTING_POTENTIAL = -70000; //Volts
-        public const int RESTORE_INCREMENT = 1;
+        public const int RESTORE_INCREMENT = 500;
 
         private DendriteGrowthState state;
         public int Id { get; private set; }
@@ -54,7 +54,7 @@ namespace SynapseModel
         {
             Neurotransmitter removed = buffer.Take();
             Interlocked.Add(ref membranePotential, removed.ElectricalPotential);
-            //Console.WriteLine("Dendrite {0} Membrane Potential is " + membranePotential, Id);
+            //Console.WriteLine("Dendrite {0} Membrane Potential is \t\t\t{1}", Id, membranePotential);
             return removed.ElectricalPotential;
         }
 
@@ -63,9 +63,13 @@ namespace SynapseModel
             {
                 Interlocked.Add(ref membranePotential, RESTORE_INCREMENT);
             }
-            else
+            else if (membranePotential > RESTING_POTENTIAL)
             {
                 Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+            }
+            else
+            {
+                //do nothing
             }
         }
 

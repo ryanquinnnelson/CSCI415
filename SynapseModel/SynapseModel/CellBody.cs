@@ -7,7 +7,7 @@ namespace SynapseModel
     public class CellBody
     {
         public const int RESTING_POTENTIAL = -70000; //Volts
-        public const int RESTORE_INCREMENT = 1;
+        public const int RESTORE_INCREMENT = 50;
         private BlockingCollection<int> buffer; //shared
         private int membranePotential; //Volts
         private int state; //0 is resting state, 1 is action potential
@@ -44,6 +44,7 @@ namespace SynapseModel
             if (state == 0)
             {
                 Interlocked.Add(ref membranePotential, voltage);
+                Console.WriteLine("CellBody Membrane Potential is \t\t\t\t\t{0}", membranePotential);
             }
             return voltage;
         }
@@ -54,9 +55,12 @@ namespace SynapseModel
             {
                 Interlocked.Add(ref membranePotential, RESTORE_INCREMENT);
             }
-            else
+            else if(membranePotential > RESTING_POTENTIAL)
             {
                 Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+            }
+            else{
+                //do nothing
             }
         }
 

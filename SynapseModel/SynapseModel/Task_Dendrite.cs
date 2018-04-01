@@ -23,7 +23,7 @@ namespace SynapseModel
             while (DateTime.Now - start < runLength)
             {
                 int voltage = dt.TryRemoveFromBuffer();
-                Console.WriteLine("Task_Dendrite {0} consumed {1} from buffer.", Id, voltage);
+                //Console.WriteLine("Task_Dendrite {0} consumed {1} from buffer.", Id, voltage);
             }//end while
 
             //Console.WriteLine("Task_Dendrite {0} is done.", Id);
@@ -40,7 +40,7 @@ namespace SynapseModel
                 int difference = (currentMembranePotential - RESTING_POTENTIAL);
                 cb.AddToBuffer(difference);
 
-                Console.WriteLine("Task_Dendrite {0} produced {1} to cell body buffer.", Id, currentMembranePotential);
+                //Console.WriteLine("Task_Dendrite {0} produced {1} to cell body buffer.", Id, difference);
             }//end while
 
             //Console.WriteLine("Task_Dendrite {0} is done.", Id);
@@ -55,7 +55,7 @@ namespace SynapseModel
             {
                 Thread.Sleep(Frequency);
                 dt.DecayMembranePotential();
-                Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dt.MembranePotential);
+                //Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dt.MembranePotential);
             }
             //Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }

@@ -28,7 +28,7 @@ namespace SynapseModel
 
     class MainClass
     {
-        private const int SECONDS = 1;
+        private const int SECONDS = 10;
         private static DateTime start;
 
         public static void Main(string[] args)
@@ -38,47 +38,65 @@ namespace SynapseModel
             //setup
             start = DateTime.Now;
             TimeSpan runLength = new TimeSpan(0, 0, SECONDS);
+            TimeSpan runLength_long = new TimeSpan(0, 0, SECONDS * 2);
             List<Task> tasks = new List<Task>();
             Neuron neuron = new Neuron();
 
 
             //create tasks
-            //Record membrane potential of cell body
-            Task t_recorder = Task.Factory.StartNew(() =>
-            {
-                new Recorder(start).Work(neuron.Body, runLength);
-            });
-            tasks.Add(t_recorder);
+            ////Record membrane potential of cell body
+            //Task t_recorder = Task.Factory.StartNew(() =>
+            //{
+            //    new Recorder(start).Work(neuron.Body, runLength);
+            //});
+            //tasks.Add(t_recorder);
 
+            //====================================================================//
+            //                            cell body                               //
+            //====================================================================//
             //Consumers to retrieve electrical potential from cell body buffer
             for (int i = 0; i < 1; i++)
             {
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Consumer_CellBody(id).Work(neuron.Body, runLength);
+                    new Task_CellBody(id, 10).Consume(neuron.Body, runLength);
                 }, i);
                 tasks.Add(newest);
             }
 
+            //Decayers to decay membrane potential of cell body
+            for (int i = 0; i < 1; i++)
+            {
+                Task newest = Task.Factory.StartNew((val) =>
+                {
+                    int id = (int)val;
+                    new Task_CellBody(id, 10).Decay(neuron.Body, runLength);
+                }, i);
+                tasks.Add(newest);
+            }
+
+            //====================================================================//
+            //                             dendrite                               //
+            //====================================================================//
             //Consumers to retrieve neurotransmitters from dendrite buffer
             for (int i = 0; i < 1; i++)
             {
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, 100).Consume(neuron.GetDendrite(0), runLength);
+                    new Task_Dendrite(id, 10).Consume(neuron.GetDendrite(0), runLength);
                 }, i);
                 tasks.Add(newest);
             }
 
             //Producers to send electrical potential to cell body buffer
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, 100).Produce(neuron.GetDendrite(0), neuron.Body, runLength);
+                    new Task_Dendrite(id, 10).Produce(neuron.GetDendrite(0), neuron.Body, runLength);
                 }, i);
                 tasks.Add(newest);
             }
@@ -89,18 +107,22 @@ namespace SynapseModel
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, 100).Decay(neuron.GetDendrite(0), runLength);
+                    new Task_Dendrite(id, 10).Decay(neuron.GetDendrite(0), runLength);
                 }, i);
                 tasks.Add(newest);
             }
 
+
+            //====================================================================//
+            //                               input                                //
+            //====================================================================//
             //Producers to send neurotransmitters to dendrites
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 2; i++)
             {
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Producer_Axon(id, 100).Work(neuron.GetDendrite(0), runLength);
+                    new Task_Input(id, 10).Produce(neuron.GetDendrite(0), runLength);
                 }, i);
                 tasks.Add(newest);
             }

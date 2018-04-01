@@ -38,15 +38,13 @@
     <Compile Include="Dendrite.cs" />
     <Compile Include="_DendriteSecondaryMessenger.cs" />
     <Compile Include="_Synapse.cs" />
-    <Compile Include="Task_Producer_Axon.cs" />
-    <Compile Include="Task_Consumer_Dendrite.cs" />
-    <Compile Include="Task_Producer_Dendrite.cs" />
     <Compile Include="CellBody.cs" />
-    <Compile Include="Task_Consumer_CellBody.cs" />
     <Compile Include="Task_MembranePotentialRecorder.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="Axon.cs" />
     <Compile Include="Task_Dendrite.cs" />
+    <Compile Include="Task_CellBody.cs" />
+    <Compile Include="Task_Input.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
