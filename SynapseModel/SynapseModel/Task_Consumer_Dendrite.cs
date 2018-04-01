@@ -18,7 +18,7 @@ namespace SynapseModel
             while (DateTime.Now - start < runLength)
             {
                 int voltage = dt.TryRemoveFromBuffer();
-                Console.WriteLine("Consumer_Dendrite {0} removed {1} from buffer.", Id, voltage);
+                //Console.WriteLine("Consumer_Dendrite {0} removed {1} from buffer.", Id, voltage);
             }//end while
 
             //Console.WriteLine("Consumer_Dendrite {0} is done.", Id);

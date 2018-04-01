@@ -26,7 +26,7 @@ namespace SynapseModel
                 int difference = (currentMembranePotential - RESTING_POTENTIAL);
                 cb.AddToBuffer(difference);
 
-                Console.WriteLine("Producer_Dendrite {0} added {1} to cell body buffer.", Id, currentMembranePotential);
+                //Console.WriteLine("Producer_Dendrite {0} added {1} to cell body buffer.", Id, currentMembranePotential);
             }//end while
 
             //Console.WriteLine("Producer_Dendrite {0} is done.", Id);

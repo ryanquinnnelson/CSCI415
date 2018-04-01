@@ -24,7 +24,7 @@ namespace SynapseModel
                 Neurotransmitter newest = new Neurotransmitter(true);
                 dt.AddToBuffer(newest);
 
-                Console.WriteLine("Producer_Axon {0} added {1} to dendrite {2} buffer.", Id, newest.ElectricalPotential, dt.Id);
+                //Console.WriteLine("Producer_Axon {0} added {1} to dendrite {2} buffer.", Id, newest.ElectricalPotential, dt.Id);
             }//end while
 
             //Console.WriteLine("Producer_Axon {0} is done.", Id);

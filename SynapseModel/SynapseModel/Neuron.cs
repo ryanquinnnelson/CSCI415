@@ -62,10 +62,15 @@ namespace SynapseModel
             }
         }
 
+        public Dendrite GetDendrite(int index){
+            return dendrites[index];
+        }
+
 
         private void InitializeDendrites()
         {
             Dendrite d1 = new Dendrite(nextDendriteId++, DendriteType.Proximal);
+            dendrites.Add(d1);
         }
 
         private void InitializeAxons()

@@ -20,7 +20,7 @@ namespace SynapseModel
 
             while (DateTime.Now - start < workDay)
             {
-                Thread.Sleep(1);
+                Thread.Sleep(10);
                 current = DateTime.Now; 
                 ts = current.Subtract(program_start);
                 cellBodyMembranePotential = cb.MembranePotential;
