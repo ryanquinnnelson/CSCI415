@@ -1,0 +1,5 @@
+/Users/Ryan/Desktop/CSCI415/SynapseModel/SynapseModel/bin/Debug/SynapseModel.exe
+/Users/Ryan/Desktop/CSCI415/SynapseModel/SynapseModel/bin/Debug/SynapseModel.pdb
+/Users/Ryan/Desktop/CSCI415/SynapseModel/SynapseModel/obj/x86/Debug/SynapseModel.csproj.CoreCompileInputs.cache
+/Users/Ryan/Desktop/CSCI415/SynapseModel/SynapseModel/obj/x86/Debug/SynapseModel.exe
+/Users/Ryan/Desktop/CSCI415/SynapseModel/SynapseModel/obj/x86/Debug/SynapseModel.pdb
