@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
 namespace SynapseModel
@@ -13,14 +14,16 @@ namespace SynapseModel
         private CellBody body;
         private List<Dendrite> dendrites;
         private List<Axon> axons;
+        private List<Task> main_tasks;
 
-        public Neuron(DateTime start)
+        public Neuron(DateTime start, List<Task> tasks)
         {
             state = CellGrowthState.NoGrowth;
             body = new CellBody(start);
             dendrites = new List<Dendrite>();
             axons = new List<Axon>();
             this.start = start;
+            main_tasks = tasks;
 
             InitializeDendrites();
             InitializeAxons();
@@ -78,5 +81,37 @@ namespace SynapseModel
         {
             //to be implemented
         }
+
+        public Dendrite AddDendrite(DendriteType type){
+            Dendrite d = new Dendrite(nextDendriteId++, type);
+            dendrites.Add(d);
+            return d;
+        }
+
+
+
+
+
+        //test for event
+        public void TestEvent(){
+            Console.WriteLine("test event");
+
+            CellGrowthEventArgs args = new CellGrowthEventArgs();
+            args.neuron = this;
+            args.type = DendriteType.Proximal;
+            args.timespan = new TimeSpan(0, 0, 2);
+            args.tasks = main_tasks;
+
+            OnCellGrowthTriggered(args);
+        }
+
+        protected virtual void OnCellGrowthTriggered(CellGrowthEventArgs e){
+            EventHandler<CellGrowthEventArgs> handler = CellGrowthTriggered;
+            if(handler != null){
+                handler(this, e);
+            }
+        }
+
+        public event EventHandler<CellGrowthEventArgs> CellGrowthTriggered;
     }
 }

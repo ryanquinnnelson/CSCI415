@@ -19,6 +19,7 @@ namespace SynapseModel
         {
             DateTime start = DateTime.Now;
             //Console.WriteLine("Task_CellBody {0} is working...", Id);
+
             while (DateTime.Now - start < runLength)
             {
                 int voltage = cb.TryRemoveFromBuffer();

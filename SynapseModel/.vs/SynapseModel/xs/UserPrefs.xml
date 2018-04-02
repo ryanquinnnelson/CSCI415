@@ -1,8 +1,7 @@
 ﻿<Properties StartupConfiguration="{F1487895-0F2E-40E0-BC99-FDA5C429D80A}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="SynapseModel/CellBody.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SynapseModel/Program.cs">
     <Files>
-      <File FileName="SynapseModel/Program.cs" Line="47" Column="27" />
-      <File FileName="SynapseModel/CellBody.cs" Line="126" Column="13" />
+      <File FileName="SynapseModel/Program.cs" Line="62" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />

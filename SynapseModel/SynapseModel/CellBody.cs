@@ -133,13 +133,6 @@ namespace SynapseModel
             now = DateTime.Now;
             ts = now.Subtract(start);
             Output(ts, 30000);
-            //Thread.Sleep(1);
-
-
-            //while(membranePotential > -100000){
-            //    current = Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
-            //    //Output(current);
-            //}
 
             current = Interlocked.Exchange(ref membranePotential, -100000);
             now = DateTime.Now;
@@ -147,12 +140,7 @@ namespace SynapseModel
             Output(ts, -100000);
             Thread.Sleep(1);
 
-            ////restore to resting potential
-            //while (membranePotential < -70000)
-            //{
-            //    current = Interlocked.Increment(ref membranePotential);
-            //    //Output(current);
-            //}
+            //restore to resting potential
             current = Interlocked.Exchange(ref membranePotential, RESTING_POTENTIAL);
 
             SetRestingPotentialState();
