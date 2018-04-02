@@ -14,12 +14,13 @@ namespace SynapseModel
         private List<Dendrite> dendrites;
         private List<Axon> axons;
 
-        public Neuron()
+        public Neuron(DateTime start)
         {
             state = CellGrowthState.NoGrowth;
-            body = new CellBody();
+            body = new CellBody(start);
             dendrites = new List<Dendrite>();
             axons = new List<Axon>();
+            this.start = start;
 
             InitializeDendrites();
             InitializeAxons();

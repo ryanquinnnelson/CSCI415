@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace SynapseModel
 {
@@ -11,13 +12,18 @@ namespace SynapseModel
         private BlockingCollection<int> buffer; //shared
         private int membranePotential; //Volts
         private int state; //0 is resting state, 1 is action potential
+        private DateTime start;
+        public List<Record> results = new List<Record>();
 
 
-        public CellBody()
+
+
+        public CellBody(DateTime start)
         {
             buffer = new BlockingCollection<int>(new ConcurrentQueue<int>());
             state = 0;
             membranePotential = RESTING_POTENTIAL;
+            this.start = start;
         }
 
         public int MembranePotential
@@ -32,6 +38,18 @@ namespace SynapseModel
             }
         }
 
+        public int State
+        {
+            get
+            {
+                return state;
+            }
+            private set
+            {
+                state = value;
+            }
+        }
+
 
         public void AddToBuffer(int voltage)
         {
@@ -43,71 +61,108 @@ namespace SynapseModel
             int voltage = buffer.Take();
             if (state == 0)
             {
-                Interlocked.Add(ref membranePotential, voltage);
-                Console.WriteLine("CellBody Membrane Potential is \t\t\t\t\t{0}", membranePotential);
+                int current = Interlocked.Add(ref membranePotential, voltage);
+
+
+                DateTime now = DateTime.Now;
+                TimeSpan ts = now.Subtract(start);
+                Output(ts, current);
+
+
+                CheckForActionPotential();
+                //Console.WriteLine("CellBody Membrane Potential is \t\t\t\t\t{0}", membranePotential);
+
             }
+
             return voltage;
         }
 
         public void DecayMembranePotential()
         {
-            if (membranePotential < RESTING_POTENTIAL)
+            if (state == 0 && membranePotential < RESTING_POTENTIAL)
             {
-                Interlocked.Add(ref membranePotential, RESTORE_INCREMENT);
+                int current = Interlocked.Add(ref membranePotential, RESTORE_INCREMENT);
+                //Output(current);
             }
-            else if(membranePotential > RESTING_POTENTIAL)
+            else if (state == 0 && membranePotential > RESTING_POTENTIAL)
             {
-                Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+                int current = Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+                //Output(current);
             }
-            else{
+            else
+            {
                 //do nothing
             }
         }
 
-        public void SetActionPotential()
+        public void SetActionPotentialState()
         {
-            Interlocked.CompareExchange(ref state, 1, 0);
+            int original = Interlocked.CompareExchange(ref state, 1, 0);
+            if (original == 0)
+            {
+                //Thread.Sleep(1);
+                TriggerActionPotentialTask();
+            }
         }
 
-        public void SetRestingPotential()
+        public void SetRestingPotentialState()
         {
             Interlocked.CompareExchange(ref state, 0, 1);
         }
 
 
 
-        //public void CheckActionPotential(){
-        //    //Console.WriteLine("CellBody Membrane Potential is " + membranePotential);
-        //    if (membranePotential >= -50000 && cellState != CellState.ActionPotential)
-        //    {
-        //        TriggerActionPotential();
-        //    }
-        //}
+        public void CheckForActionPotential()
+        {
+            //Console.WriteLine("CellBody Membrane Potential is " + membranePotential);
+            if (membranePotential >= -50000)
+            {
+                SetActionPotentialState();
+            }
+        }
 
-        //public void TriggerActionPotential(){
-        //    //Console.WriteLine("Action Potential triggered...");
-        //    //prevent another action potential from being triggered until finished with absolute refractory period
-        //    cellState = CellState.ActionPotential;
+        public void TriggerActionPotentialTask()
+        {
+            //Console.WriteLine("Action Potential triggered.");
+            int current;
+            DateTime now;
+            TimeSpan ts;
 
-        //    //spike to +30 mV
-        //    membranePotential = +30000;
-        //    Thread.Sleep(2);
-        //    //Console.WriteLine("CellBody Membrane Potential is " + membranePotential);
 
-        //    //decrease to -100 mV
-        //    membranePotential = -100000;
-        //    Thread.Sleep(2);
-        //    //Console.WriteLine("CellBody Membrane Potential is " + membranePotential);
+            current = Interlocked.Exchange(ref membranePotential, +30000);
+            now = DateTime.Now;
+            ts = now.Subtract(start);
+            Output(ts, 30000);
+            //Thread.Sleep(1);
 
-        //    //absolute refractory period
-        //    Thread.Sleep(1); 
 
-        //    //stabilize to resting potential
-        //    while(membranePotential <= -70000){
-        //        Interlocked.Increment(ref membranePotential);
-        //    }
-        //    //Console.WriteLine("Resting Potential reset.");
-        //    cellState = CellState.RestingPotential;
-        //}
+            //while(membranePotential > -100000){
+            //    current = Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+            //    //Output(current);
+            //}
+
+            current = Interlocked.Exchange(ref membranePotential, -100000);
+            now = DateTime.Now;
+            ts = now.Subtract(start);
+            Output(ts, -100000);
+            Thread.Sleep(1);
+
+            ////restore to resting potential
+            //while (membranePotential < -70000)
+            //{
+            //    current = Interlocked.Increment(ref membranePotential);
+            //    //Output(current);
+            //}
+            current = Interlocked.Exchange(ref membranePotential, RESTING_POTENTIAL);
+
+            SetRestingPotentialState();
+        }
+
+        public void Output(TimeSpan ts, int potential)
+        {
+            DateTime now = DateTime.Now;
+            results.Add(new Record(ts, potential));
+        }
+
     } //end class
 }

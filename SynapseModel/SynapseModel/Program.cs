@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace SynapseModel
 {
@@ -28,7 +29,7 @@ namespace SynapseModel
 
     class MainClass
     {
-        private const int SECONDS = 10;
+        private const int SECONDS = 8;
         private static DateTime start;
 
         public static void Main(string[] args)
@@ -40,14 +41,14 @@ namespace SynapseModel
             TimeSpan runLength = new TimeSpan(0, 0, SECONDS);
             TimeSpan runLength_long = new TimeSpan(0, 0, SECONDS * 2);
             List<Task> tasks = new List<Task>();
-            Neuron neuron = new Neuron();
+            Neuron neuron = new Neuron(start);
 
 
             //create tasks
             ////Record membrane potential of cell body
             //Task t_recorder = Task.Factory.StartNew(() =>
             //{
-            //    new Recorder(start).Work(neuron.Body, runLength);
+            //    new Recorder(start).Record(neuron.Body, runLength);
             //});
             //tasks.Add(t_recorder);
 
@@ -130,7 +131,12 @@ namespace SynapseModel
 
 
 
+
             Task.WaitAll(tasks.ToArray());
+            foreach (Record r in neuron.Body.results)
+            {
+                Console.WriteLine(r);
+            }
             Console.WriteLine("Stopped Neuron Model.");
         }
     }

@@ -45,6 +45,7 @@
     <Compile Include="Task_Dendrite.cs" />
     <Compile Include="Task_CellBody.cs" />
     <Compile Include="Task_Input.cs" />
+    <Compile Include="Record.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
