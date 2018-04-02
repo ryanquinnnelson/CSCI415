@@ -29,6 +29,7 @@ namespace SynapseModel
 
     class MainClass
     {
+        
         private const int SECONDS = 8;
         private static DateTime start;
         private static CancellationTokenSource cts = new CancellationTokenSource();
