@@ -44,8 +44,8 @@ namespace SynapseModel
             TimeSpan runLength_long = new TimeSpan(0, 0, SECONDS * 2);
             List<Task> tasks = new List<Task>();
             Neuron neuron = new Neuron(start, tasks);
-            neuron.CellGrowthTriggered += main_CellGrowthTriggered; //add event handler to event
-
+            neuron.CellGrowthEvent += main_CellGrowthTriggered; //add event handler to event
+            //neuron.Body.ActionPotentialEventTest();
 
             //create tasks
             //====================================================================//
@@ -126,13 +126,18 @@ namespace SynapseModel
 
 
             Task.WaitAll(tasks.ToArray(),cts.Token);
-
+            //neuron.Body.results.Sort(); //need comparator for this
             foreach (Record r in neuron.Body.results)
             {
                 Console.WriteLine(r);
             }
             Console.WriteLine("Stopped Neuron Model.");
         }//end Main()
+
+
+
+
+
 
 
         public static void main_CellGrowthTriggered(object sender, CellGrowthEventArgs e){
@@ -148,7 +153,7 @@ namespace SynapseModel
 
             Dendrite d = n.AddDendrite(type);
 
-            ////Consumer to consume neurotransmitters from dendrite buffer
+            //Consumer to consume neurotransmitters from dendrite buffer
             for (int i = 0; i < 1; i++)
             {
                 Task newest = Task.Factory.StartNew((val) =>

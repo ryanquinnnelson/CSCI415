@@ -15,6 +15,7 @@ namespace SynapseModel
         private List<Dendrite> dendrites;
         private List<Axon> axons;
         private List<Task> main_tasks;
+        private SecondaryMessenger secondary;
 
         public Neuron(DateTime start, List<Task> tasks)
         {
@@ -25,8 +26,23 @@ namespace SynapseModel
             this.start = start;
             main_tasks = tasks;
 
+
+
+            //look at the previous 2 seconds
+            int days = 0;
+            int hours = 0;
+            int minutes = 0;
+            int seconds = 2;
+            int milliseconds = 0;
+            TimeSpan window = new TimeSpan(days, hours, minutes, seconds, milliseconds);
+
+            secondary = new SecondaryMessenger(start, 2,window ); //if there are 2 action potentials within the window
+
             InitializeDendrites();
             InitializeAxons();
+
+            //add event to listen for
+            body.ActionPotentialEvent += ReceiveActionPotentialEvent;
         }
 
         public List<Dendrite> Dendrites{
@@ -89,11 +105,28 @@ namespace SynapseModel
         }
 
 
+        //test for action potential event
+        public void ReceiveActionPotentialEvent(object sender, ActionPotentialEventArgs e){
+            Console.WriteLine("received action potential event");
+
+            //add to secondary messenger for checking
+            secondary.AddEvent(DateTime.Now);
+            if(secondary.GrowthStateAchieved(DateTime.Now)){
+                
+                state = CellGrowthState.Growth;
+                this.SignalCellGrowthEvent(); //add new dendrite(s)
+            }
+        }
 
 
 
-        //test for event
-        public void TestEvent(){
+
+
+
+
+
+        //test for dendrite growth event
+        public void SignalCellGrowthEvent(){
             Console.WriteLine("test event");
 
             CellGrowthEventArgs args = new CellGrowthEventArgs();
@@ -106,12 +139,12 @@ namespace SynapseModel
         }
 
         protected virtual void OnCellGrowthTriggered(CellGrowthEventArgs e){
-            EventHandler<CellGrowthEventArgs> handler = CellGrowthTriggered;
+            EventHandler<CellGrowthEventArgs> handler = CellGrowthEvent;
             if(handler != null){
                 handler(this, e);
             }
         }
 
-        public event EventHandler<CellGrowthEventArgs> CellGrowthTriggered;
+        public event EventHandler<CellGrowthEventArgs> CellGrowthEvent;
     }
 }

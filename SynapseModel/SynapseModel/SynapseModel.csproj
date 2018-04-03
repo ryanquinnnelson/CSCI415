@@ -36,7 +36,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Neurotransmitter.cs" />
     <Compile Include="Dendrite.cs" />
-    <Compile Include="_DendriteSecondaryMessenger.cs" />
     <Compile Include="_Synapse.cs" />
     <Compile Include="CellBody.cs" />
     <Compile Include="Task_MembranePotentialRecorder.cs" />
@@ -47,6 +46,8 @@
     <Compile Include="Task_Input.cs" />
     <Compile Include="Record.cs" />
     <Compile Include="CellGrowthEventArgs.cs" />
+    <Compile Include="SecondaryMessenger.cs" />
+    <Compile Include="ActionPotentialEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
