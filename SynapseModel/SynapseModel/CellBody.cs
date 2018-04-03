@@ -101,6 +101,7 @@ namespace SynapseModel
             if (original == 0)
             {
                 //Thread.Sleep(1);
+                SignalActionPotentialEvent(); //raise event to alert neuron
                 TriggerActionPotentialTask();
             }
         }
@@ -151,6 +152,28 @@ namespace SynapseModel
             DateTime now = DateTime.Now;
             results.Add(new Record(ts, potential));
         }
+
+
+        //event test
+        public void SignalActionPotentialEvent( )
+        {
+            Console.WriteLine("action potential triggered!");
+
+            ActionPotentialEventArgs args = new ActionPotentialEventArgs();
+
+            OnActionPotentialEvent(args);
+        }
+
+        protected virtual void OnActionPotentialEvent(ActionPotentialEventArgs e)
+        {
+            EventHandler<ActionPotentialEventArgs> handler = ActionPotentialEvent;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        public event EventHandler<ActionPotentialEventArgs> ActionPotentialEvent;
 
     } //end class
 }
