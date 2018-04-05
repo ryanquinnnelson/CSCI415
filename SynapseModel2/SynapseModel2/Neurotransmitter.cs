@@ -8,14 +8,14 @@ namespace SynapseModel2
 
 
         //constructors
-        public Neurotransmitter(int charge)
+        public Neurotransmitter(int charge)//tested
         {
             this.charge = charge;
         }
 
 
         //properties
-        public int Charge
+        public int Charge//tested
         {
             get
             {
@@ -26,5 +26,22 @@ namespace SynapseModel2
                 charge = value;
             }
         }
-    }
+
+
+		//public methods
+		public override string ToString() //tested
+		{
+            return "Neurotransmitter{ charge=" + charge + " }";
+		}
+
+
+        ////tests
+        //public static void Main(){
+        //    Console.WriteLine("Test of Constructor 1");
+        //    Neurotransmitter n = new Neurotransmitter(-10);
+        //    Console.WriteLine(n);
+        //    Console.WriteLine("Test of GetCharge()");
+        //    Console.WriteLine(n.Charge);
+        //}
+	}
 }

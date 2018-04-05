@@ -12,16 +12,15 @@ namespace SynapseModel2
 
 
         //constructor
-        public EventArgs_DendriteGrowth(DateTime when, Dendrite dendrite)
+        public EventArgs_DendriteGrowth(DateTime when, Dendrite dendrite) //tested
         {
             this.when = when;
-
             this.dendrite = dendrite;
         }
 
 
         //properties
-        public Dendrite Dendrite
+        public Dendrite Dendrite //tested
         {
             get
             {
@@ -33,7 +32,7 @@ namespace SynapseModel2
             }
         }
 
-        public DateTime When
+        public DateTime When //tested
         {
             get
             {
@@ -44,6 +43,27 @@ namespace SynapseModel2
                 when = value;
             }
         }
+
+
+        //public methods
+        public override string ToString() //tested
+        {
+            return "EventArgs_DendriteGrowth{ dendrite=" + dendrite + ", when=" + when + " }";
+		}
+
+
+		////tests
+		//public static void Main(){
+        //    Console.WriteLine("Test of Constructor 1");
+        //    EventArgs_DendriteGrowth e = new EventArgs_DendriteGrowth(DateTime.Now, new Dendrite(1, 1, 100));
+        //    Console.WriteLine(e);
+
+        //    Console.WriteLine("Test of GetDendrite()");
+        //    Console.WriteLine(e.Dendrite);
+
+        //    Console.WriteLine("Test of GetWhen()");
+        //    Console.WriteLine(e.When);
+        //}
 
     }
 }

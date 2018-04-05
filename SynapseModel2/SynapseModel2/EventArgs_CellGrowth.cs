@@ -9,7 +9,7 @@ namespace SynapseModel2
 
 
         //constructors
-        public EventArgs_CellGrowth(DateTime when, Neuron neuron)
+        public EventArgs_CellGrowth(DateTime when, Neuron neuron) //tested
         {
             this.when = when;
             this.neuron = neuron;
@@ -17,7 +17,7 @@ namespace SynapseModel2
 
 
         //properties
-        public Neuron Neuron
+        public Neuron Neuron //tested
         {
             get
             {
@@ -29,7 +29,7 @@ namespace SynapseModel2
             }
         }
 
-        public DateTime When
+        public DateTime When //tested
         {
             get
             {
@@ -41,5 +41,24 @@ namespace SynapseModel2
             }
         }
 
+        //public methods
+        public override string ToString() //tested
+        {
+            return "EventArgs_CellGrowth{ neuron=" + neuron + ", when=" + when + " }";
+        }
+
+
+        ////tests
+        //public static void Main(){
+        //    Console.WriteLine("Test of Constructor 1");
+        //    EventArgs_CellGrowth e = new EventArgs_CellGrowth(DateTime.Now, new Neuron());
+        //    Console.WriteLine(e);
+
+        //    Console.WriteLine("Test of GetNeuron()");
+        //    Console.WriteLine(e.Neuron);
+
+        //    Console.WriteLine("Test of GetWhen()");
+        //    Console.WriteLine(e.When);
+        //}
     }
 }

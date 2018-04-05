@@ -8,14 +8,14 @@ namespace SynapseModel2
 
 
         //constructors
-        public EventArgs_ActionPotential(DateTime when)
+        public EventArgs_ActionPotential(DateTime when) //tested
         {
             this.when = when;
         }
 
 
         //properties
-        public DateTime When
+        public DateTime When //tested
         {
             get
             {
@@ -26,6 +26,25 @@ namespace SynapseModel2
                 when = value;
             }
         }
+
+
+        //public methods
+        public override string ToString() //tested
+        {
+            return "EventArgs_ActionPotential{ when=" + when + " }";
+        }
+
+
+        ////tests
+        //public static void Main()
+        //{
+        //    Console.WriteLine("Test of Constructor 1");
+        //    EventArgs_ActionPotential e = new EventArgs_ActionPotential(DateTime.Now);
+        //    Console.WriteLine(e);
+
+        //    Console.WriteLine("Test of GetWhen()");
+        //    Console.WriteLine(e.When);
+        //}
 
     }
 }

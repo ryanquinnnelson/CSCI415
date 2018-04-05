@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System.Collections;
+using System.Text;
+using System.Collections.Generic;
 
 namespace SynapseModel2
 {
@@ -20,11 +21,16 @@ namespace SynapseModel2
         private BlockingCollection<Neurotransmitter> buffer; //shared
         private SecondaryMessenger messenger;
         private int numAvailableSynapses;
-        private ConcurrentDictionary<int, Synapse> synapses; //shared
+        //private ConcurrentDictionary<int, Synapse> synapses; //shared
+        private List<Synapse> synapses;
         private int nextSynapseId;
 
-        //constructors
-        public Dendrite(int id, int type, int numAvailableSynapses)
+
+
+
+
+		//constructors
+		public Dendrite(int id, int type, int numAvailableSynapses)
         {
             this.id = id;
             this.type = type;
@@ -42,7 +48,8 @@ namespace SynapseModel2
             TimeSpan window = new TimeSpan(days, hours, minutes, seconds, milliseconds);
 
             messenger = new SecondaryMessenger(DateTime.Now, 100, window);
-            synapses = new ConcurrentDictionary<int, Synapse>();
+            //synapses = new ConcurrentDictionary<int, Synapse>();
+            synapses = new List<Synapse>();
             nextSynapseId = 0;
 
             AddOrUpdateSynapses(numAvailableSynapses);
@@ -131,18 +138,31 @@ namespace SynapseModel2
         public Synapse GetOpenSynapse(){
             Synapse open = null;
 
-            foreach(int key in synapses.Keys){
-                Synapse current;
-                synapses.TryGetValue(key, out current);
+            //foreach(int key in synapses.Keys){
+            //    Synapse current;
+            //    synapses.TryGetValue(key, out current);
 
-                if(!current.IsConnectionAlreadyFormed()){
-                    open = current;
-                    break; //stop searching
-                }
-            }
+            //    if(!current.IsConnectionAlreadyFormed()){
+            //        open = current;
+            //        break; //stop searching
+            //    }
+            //}
 
             return open;
         }
+
+        public override string ToString()
+        {
+            return "Dendrite\n{ \n\tid=" + id + ", \n\ttype=" + type + ", \n\tstate="
+                + state + ", \n\tmembranePotential=" + membranePotential +
+                ", \n\tbuffer=" + buffer + ", \n\tmessenger=" + messenger
+                + ", \n\tnumAvailableSynapses=" + numAvailableSynapses
+                + ", \n\tnextSynapseId=" + nextSynapseId
+                + ", \n\tsynapses=" + OutputSynapses() + " \n}";
+        }
+
+
+
 
 
 
@@ -152,17 +172,19 @@ namespace SynapseModel2
             for (int i = 0; i < number; i++)
             {
                 Synapse newest = new Synapse(nextSynapseId++, this);
-                synapses.AddOrUpdate(newest.Id, newest, (key, value) => value = newest);
+                synapses.Add(newest);
             }
         }
 
-        private Synapse GetSynapse(int synapseId)
+        private Synapse GetSynapse(int targetId)
         {
             Synapse target = null;
 
-            if (synapses.ContainsKey(synapseId))
-            {
-                synapses.TryGetValue(synapseId, out target);
+            foreach(Synapse s in synapses){
+                if(s.Id == targetId){
+                    target = s;
+                    break;
+                }
             }
 
             return target;
@@ -180,6 +202,24 @@ namespace SynapseModel2
 
         private void SetNoGrowthState(){
             Interlocked.CompareExchange(ref state, 0, 1);
+        }
+
+        private string OutputSynapses()
+        {
+            StringBuilder sb = new StringBuilder("[");
+            sb.Append(synapses[0].ToString());
+            //foreach (Synapse s in synapses)
+            //{
+            //    sb.Append(s);
+            //    sb.Append(" ,");
+            //}
+            //if (synapses.Count > 0)
+            //{
+            //    sb.Remove(sb.Length - 1, 1);
+            //}
+
+            sb.Append("]");
+            return sb.ToString();
         }
 
 
@@ -204,5 +244,14 @@ namespace SynapseModel2
         }
 
         public event EventHandler<EventArgs_DendriteGrowth> DendriteGrowthEvent;
+
+
+        ////tests
+        //public static void Main(){
+        //    Console.WriteLine("Test of Constructor 1");
+        //    Dendrite d = new Dendrite(1, 1, 5);
+        //    Console.WriteLine(d);
+        //    Console.WriteLine();
+        //}
     }
 }

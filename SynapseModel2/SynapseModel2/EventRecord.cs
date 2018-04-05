@@ -9,7 +9,7 @@ namespace SynapseModel2
 
 
         //constructors
-        public EventRecord(TimeSpan t, int membranePotential)
+        public EventRecord(TimeSpan t, int membranePotential) //tested
         {
             //convert timespan to numeric format
             String s = t.Seconds + "." + t.Milliseconds;
@@ -20,7 +20,7 @@ namespace SynapseModel2
 
 
         //properties
-        public double Time
+        public double Time //tested
         {
             get
             {
@@ -32,7 +32,7 @@ namespace SynapseModel2
             }
         }
 
-        public int MembranePotential
+        public int MembranePotential //tested
         {
             get
             {
@@ -46,7 +46,7 @@ namespace SynapseModel2
 
 
         //public methods
-        public int CompareTo(EventRecord other)
+        public int CompareTo(EventRecord other) //tested
         {
             if (this.time < other.time)
             {
@@ -62,9 +62,28 @@ namespace SynapseModel2
             }
         }
 
-        public override string ToString()
+        public override string ToString() //tested
         {
             return time + "\t" + membranePotential;
         }
+
+
+        ////tests
+        //public static void Main()
+        //{
+        //    Console.WriteLine("Test of Constructor 1");
+        //    EventRecord e = new EventRecord(new TimeSpan(0, 0, 2), -1000);
+        //    Console.WriteLine(e);
+        //    Console.WriteLine("Test of GetTime()");
+        //    Console.WriteLine(e.Time);
+        //    Console.WriteLine("Test of GetMembranePotential()");
+        //    Console.WriteLine(e.MembranePotential);
+        //    Console.WriteLine("Test of CompareTo()");
+        //    EventRecord later = new EventRecord(new TimeSpan(0, 0, 5), -1000);
+        //    Console.WriteLine(e.CompareTo(later));
+        //    Console.WriteLine(later.CompareTo(e));
+        //    EventRecord equal = new EventRecord(new TimeSpan(0, 0, 2), -1000);
+        //    Console.WriteLine(e.CompareTo(equal));
+        //}
     }
 }

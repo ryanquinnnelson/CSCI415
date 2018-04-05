@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SynapseModel2
 {
@@ -13,7 +14,7 @@ namespace SynapseModel2
 
 
         //constructors
-        public SecondaryMessenger(DateTime start, int frequencyTrigger, TimeSpan window)
+        public SecondaryMessenger(DateTime start, int frequencyTrigger, TimeSpan window) //tested
         {
             this.frequencyTrigger = frequencyTrigger;
             this.window = window;
@@ -23,12 +24,12 @@ namespace SynapseModel2
 
 
         //public methods
-        public void AddEvent(DateTime dt)
+        public void AddEvent(DateTime dt) //tested
         {
             events.Add(dt);
         }
 
-        public bool IsGrowthStateTriggered(DateTime now)
+        public bool IsGrowthStateTriggered(DateTime now) //tested
         {
             //determine current observation window
             DateTime oldest = now - window;
@@ -57,7 +58,48 @@ namespace SynapseModel2
                 return false;
             }
         }
+
+        public override string ToString() //tested
+        {
+            return "SecondaryMessenger{ frequencyTrigger=" + frequencyTrigger
+                + ", window=" + window + ", start=" + start + ", events=" + OutputEventsList() + " }";
+        }
+
+
+        //private helper methods
+        private string OutputEventsList() //tested
+        {
+            StringBuilder sb = new StringBuilder("[");
+            foreach (DateTime dt in events)
+            {
+                sb.Append(dt);
+                sb.Append(",");
+
+            }
+            if (events.Count > 0)
+            {
+                sb.Remove(sb.Length - 1, 1);
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+
+        ////tests
+        //public static void Main(){
+        //    Console.WriteLine("Test of Constructor 1");
+        //    SecondaryMessenger m = new SecondaryMessenger(DateTime.Now, 1, new TimeSpan(0, 0, 5));
+        //    Console.WriteLine(m);
+        //    Console.WriteLine("Test of AddEvent()");
+        //    m.AddEvent(DateTime.Now);
+        //    m.AddEvent(new DateTime(2017, 12, 1));
+        //    Console.WriteLine(m.OutputEventsList());
+        //    Console.WriteLine("Test of IsGrowthStateTriggered()");
+        //    Console.WriteLine(m.IsGrowthStateTriggered(DateTime.Now));
+        //    Console.WriteLine(m.OutputEventsList());
+        //}
+
+
     }
-
-
 }
