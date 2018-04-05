@@ -8,3 +8,6 @@
 6. Make all configuration accessible directly from Main() method (i.e. no hard-coding deeper down in the code structure; everything comes to the top)
 7. Add randomness to inhibitory, excitatory inputs
 8. Add graphing capability
+9. Make EventRecords collection in CellBody concurrent
+10. Make synapses collection in Dendrite concurrent
+11. Check over all other non-concurrent collections to check if they are shared resources.
