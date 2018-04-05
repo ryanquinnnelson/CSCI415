@@ -32,7 +32,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CellBody.cs" />
     <Compile Include="EventArgs_ActionPotential.cs" />
@@ -45,6 +44,10 @@
     <Compile Include="SecondaryMessenger.cs" />
     <Compile Include="Synapse.cs" />
     <Compile Include="Dendrite.cs" />
+    <Compile Include="Task_Dendrite.cs" />
+    <Compile Include="ProcessManager.cs" />
+    <Compile Include="Task_InputAxon.cs" />
+    <Compile Include="Task_CellBody.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

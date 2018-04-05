@@ -20,16 +20,17 @@ namespace SynapseModel3
         private ConcurrentBag<EventRecord> outputs;
         private DateTime start;
         private int state; //0 is resting state, 1 is action potential
-
+        private int decayFrequency;
 
         //constructors
-        public CellBody(DateTime start) //tested
+        public CellBody(DateTime start, int decayFrequency) //tested
         {
             buffer = new BlockingCollection<int>(new ConcurrentQueue<int>());
             membranePotential = RESTING_POTENTIAL;
             outputs = new ConcurrentBag<EventRecord>();
             this.start = start;
             state = 0;
+            this.decayFrequency = decayFrequency;
         }
 
 
@@ -55,6 +56,15 @@ namespace SynapseModel3
             private set
             {
                 state = value;
+            }
+        }
+
+        public int DecayFrequency{
+            get{
+                return this.decayFrequency;
+            }
+            private set{
+                decayFrequency = value;
             }
         }
 
@@ -95,7 +105,7 @@ namespace SynapseModel3
                     list.Add(current);
                 }
             }
-
+            list.Sort(); //??untested line
             return list;
         }
 
@@ -224,50 +234,60 @@ namespace SynapseModel3
         //    Console.WriteLine(c);
         //    Console.WriteLine("Buffer count: " + c.buffer.Count);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of GetMembranePotential()");
         //    Console.WriteLine(c.MembranePotential);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of GetState()");
         //    Console.WriteLine(c.State);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of AddToBuffer()");
         //    c.AddToBuffer(100);
         //    c.AddToBuffer(20);
         //    Console.WriteLine("Buffer count: " + c.buffer.Count);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of TryRemoveFromBuffer() with state == 1");
         //    c.State = 1;
         //    Console.WriteLine(c.TryRemoveFromBuffer());
         //    Console.WriteLine("Membrane Potential: " + c.MembranePotential);
         //    Console.WriteLine("Count of outputs: " + c.outputs.Count);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of TryRemoveFromBuffer() with state == 0, threshold potential not reached");
         //    c.State = 0;
         //    Console.WriteLine(c.TryRemoveFromBuffer());
         //    Console.WriteLine("Membrane Potential: " + c.MembranePotential);
         //    Console.WriteLine("Count of outputs: " + c.outputs.Count);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of IsThresholdPotentialReached() with membrane potential = -49000");
         //    c.MembranePotential = -49000;
         //    Console.WriteLine(c.IsThresholdPotentialReached());
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of TryRemoveFromBuffer() with state == 0, threshold potential reached");
         //    c.AddToBuffer(20);
         //    c.TryRemoveFromBuffer();
         //    Console.WriteLine(c);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of DecayMembranePotential() too negative");
         //    c.MembranePotential = -90000;
         //    Console.WriteLine(c.MembranePotential);
         //    c.DecayMembranePotential();
         //    Console.WriteLine(c.MembranePotential);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of DecayMembranePotential() too positive");
         //    c.MembranePotential = -60000;
         //    Console.WriteLine(c.MembranePotential);
         //    c.DecayMembranePotential();
         //    Console.WriteLine(c.MembranePotential);
         //    Console.WriteLine();
+
         //    Console.WriteLine("Test of DecayMembranePotential() at rest");
         //    c.MembranePotential = -70000;
         //    Console.WriteLine(c.MembranePotential);

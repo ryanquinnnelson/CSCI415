@@ -10,7 +10,7 @@ namespace SynapseModel3
     {
         //constants
         public const int RESTING_POTENTIAL = -70000; //Volts
-        public const int RESTORE_INCREMENT = 500;
+        public const int RESTORE_INCREMENT = 50;
 
 
         //fields
@@ -23,10 +23,12 @@ namespace SynapseModel3
         private int numAvailableSynapses;
         private List<Synapse> synapses;
         private int nextSynapseId;
+        private int decayFrequency;
+        private int productionFrequency;
 
 
         //constructors
-        public Dendrite(int id, int type, int numAvailableSynapses) //tested
+        public Dendrite(int id, int type, int numAvailableSynapses, int decayFrequency, int productionFrequency) //tested
         {
             state = 0;
             this.id = id;
@@ -34,6 +36,9 @@ namespace SynapseModel3
             this.numAvailableSynapses = numAvailableSynapses;
             membranePotential = RESTING_POTENTIAL;
             buffer = new BlockingCollection<Neurotransmitter>(new ConcurrentQueue<Neurotransmitter>());
+
+            this.decayFrequency = decayFrequency;
+            this.productionFrequency = productionFrequency;
 
             //look at the previous 2 seconds
             int days = 0;
@@ -112,15 +117,39 @@ namespace SynapseModel3
             }
         }
 
+        public int DecayFrequency 
+        {
+            get
+            {
+                return this.decayFrequency;
+            }
+            private set
+            {
+                decayFrequency = value;
+            }
+        }
+
+        public int ProductionFrequency
+        {
+            get
+            {
+                return this.productionFrequency;
+            }
+            private set
+            {
+                productionFrequency = value;
+            }
+        }
+
 
         //public methods
-        public void AddToBuffer(Neurotransmitter nt) //tested
+        public void AddToBuffer(Neurotransmitter nt)
         {
             buffer.Add(nt);
             messenger.AddEvent(DateTime.Now);
 
             //check whether dendrite growth state threshold reached
-            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
+            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now)) //??messenger has problems if being read while being written to
             {
                 SetGrowthState();
             }
@@ -206,6 +235,10 @@ namespace SynapseModel3
             }
 
             return false;
+        }
+
+        public int GetMembranePotentialDifference(){
+            return (membranePotential - RESTING_POTENTIAL);
         }
 
 

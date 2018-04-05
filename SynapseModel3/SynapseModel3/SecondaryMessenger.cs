@@ -24,12 +24,17 @@ namespace SynapseModel3
 
 
         //public methods
-        public void AddEvent(DateTime dt) //tested
+        public void AddEvent(DateTime dt) //needs fixing so it can work concurrently
         {
-            events.Add(dt);
+            //events.Add(dt);
         }
 
-        public bool IsGrowthStateTriggered(DateTime now) //tested
+        public bool IsGrowthStateTriggered(DateTime now) //temporary??
+        { 
+            return false;
+        }
+
+        public bool IsGrowthStateTriggered2(DateTime now) //needs fixing so it can be read from and written to concurrently??
         {
             //determine current observation window
             DateTime oldest = now - window;
