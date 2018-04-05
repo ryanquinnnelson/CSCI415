@@ -1,16 +1,11 @@
 ﻿<Properties StartupConfiguration="{B0689A4B-DDC8-4653-8EC8-08F8E9A5C300}|Default">
-  <MonoDevelop.Ide.Workbench>
-    <Pads>
-      <Pad Id="ClassPad">
-        <State name="__root__">
-          <Node name="SynapseModel3" expanded="True" selected="True">
-            <Node name="SynapseModel3" expanded="True">
-              <Node name="SynapseModel3" expanded="True" />
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
+  <MonoDevelop.Ide.Workbench ActiveDocument="SynapseModel3/Task_CellBody.cs">
+    <Files>
+      <File FileName="SynapseModel3/Task_Dendrite.cs" Line="1" Column="1" />
+      <File FileName="SynapseModel3/ProcessManager.cs" Line="11" Column="48" />
+      <File FileName="SynapseModel3/Task_InputAxon.cs" Line="1" Column="1" />
+      <File FileName="SynapseModel3/Task_CellBody.cs" Line="1" Column="1" />
+    </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
