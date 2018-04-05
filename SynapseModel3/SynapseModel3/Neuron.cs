@@ -16,11 +16,11 @@ namespace SynapseModel3
 
 
         //constructors
-        public Neuron() //tested
+        public Neuron(int cellBodyDecayFrequency, int dendriteDecayFrequency, int dendriteProductionFrequency)
         {
             nextDendriteId = 0;
             state = 0;
-            body = new CellBody(DateTime.Now);
+            body = new CellBody(DateTime.Now, cellBodyDecayFrequency);
             dendrites = new List<Dendrite>();
 
             //look at the previous 2 seconds
@@ -34,7 +34,7 @@ namespace SynapseModel3
             messenger = new SecondaryMessenger(DateTime.Now, 100, window);
 
             //initialize dendrites
-            AddDendrites(1, new int[] { 0 }, 1);
+            AddDendrites(1, new int[] { 0 }, 1, dendriteDecayFrequency, dendriteProductionFrequency);
 
             //add listener for ActionPotential event
             body.ActionPotentialEvent += ReceiveActionPotentialEvent;
@@ -135,7 +135,7 @@ namespace SynapseModel3
 
 
         //private helper methods
-        private void AddDendrites(int num, int[] typeList, int numAvailableSynapses) //tested
+        private void AddDendrites(int num, int[] typeList, int numAvailableSynapses, int dendriteDecayFrequency, int dendriteProductionFrequency)
         {
             if (typeList.Length != num)
             {
@@ -144,7 +144,7 @@ namespace SynapseModel3
 
             for (int i = 0; i < num; i++)
             {
-                Dendrite newest = new Dendrite(nextDendriteId, typeList[i], numAvailableSynapses);
+                Dendrite newest = new Dendrite(nextDendriteId, typeList[i], numAvailableSynapses, dendriteDecayFrequency, dendriteProductionFrequency);
                 dendrites.Add(newest);
             }
         }
@@ -176,7 +176,7 @@ namespace SynapseModel3
         public void RaiseCellGrowthEvent() //tested
         {
             //action within the cell
-            AddDendrites(1, new int[] { 0 }, 5);
+            AddDendrites(1, new int[] { 0 }, 5, 100, 100); //??hardcoded values should be changed
 
             //reset neuron state
             state = 0;

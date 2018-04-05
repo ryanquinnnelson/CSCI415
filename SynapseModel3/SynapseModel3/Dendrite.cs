@@ -23,10 +23,12 @@ namespace SynapseModel3
         private int numAvailableSynapses;
         private List<Synapse> synapses;
         private int nextSynapseId;
+        private int decayFrequency;
+        private int productionFrequency;
 
 
         //constructors
-        public Dendrite(int id, int type, int numAvailableSynapses) //tested
+        public Dendrite(int id, int type, int numAvailableSynapses, int decayFrequency, int productionFrequency) //tested
         {
             state = 0;
             this.id = id;
@@ -34,6 +36,9 @@ namespace SynapseModel3
             this.numAvailableSynapses = numAvailableSynapses;
             membranePotential = RESTING_POTENTIAL;
             buffer = new BlockingCollection<Neurotransmitter>(new ConcurrentQueue<Neurotransmitter>());
+
+            this.decayFrequency = decayFrequency;
+            this.productionFrequency = productionFrequency;
 
             //look at the previous 2 seconds
             int days = 0;
@@ -109,6 +114,30 @@ namespace SynapseModel3
             private set
             {
                 membranePotential = value;
+            }
+        }
+
+        public int DecayFrequency 
+        {
+            get
+            {
+                return this.decayFrequency;
+            }
+            private set
+            {
+                decayFrequency = value;
+            }
+        }
+
+        public int ProductionFrequency
+        {
+            get
+            {
+                return this.productionFrequency;
+            }
+            private set
+            {
+                productionFrequency = value;
             }
         }
 
@@ -206,6 +235,10 @@ namespace SynapseModel3
             }
 
             return false;
+        }
+
+        public int GetMembranePotentialDifference(){
+            return (membranePotential - RESTING_POTENTIAL);
         }
 
 
