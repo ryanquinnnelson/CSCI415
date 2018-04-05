@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{BB1FA49A-74D6-4D42-8A46-1356ECFD2EF9}</ProjectGuid>
+    <ProjectGuid>{B0689A4B-DDC8-4653-8EC8-08F8E9A5C300}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>SynapseModel2</RootNamespace>
-    <AssemblyName>SynapseModel2</AssemblyName>
+    <RootNamespace>SynapseModel3</RootNamespace>
+    <AssemblyName>SynapseModel3</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -34,17 +34,17 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EventRecord.cs" />
-    <Compile Include="SecondaryMessenger.cs" />
     <Compile Include="CellBody.cs" />
     <Compile Include="EventArgs_ActionPotential.cs" />
-    <Compile Include="Dendrite.cs" />
+    <Compile Include="EventArgs_CellGrowth.cs" />
     <Compile Include="EventArgs_DendriteGrowth.cs" />
+    <Compile Include="EventRecord.cs" />
+    <Compile Include="InputAxon.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="Neurotransmitter.cs" />
+    <Compile Include="SecondaryMessenger.cs" />
     <Compile Include="Synapse.cs" />
-    <Compile Include="InputAxon.cs" />
-    <Compile Include="EventArgs_CellGrowth.cs" />
+    <Compile Include="Dendrite.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
