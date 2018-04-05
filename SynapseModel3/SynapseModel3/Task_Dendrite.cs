@@ -72,7 +72,7 @@ namespace SynapseModel3
             while (DateTime.Now - start < runLength)
             {
                 int voltage = dendrite.TryRemoveFromBuffer();
-                Console.WriteLine("Task_Dendrite {0} consumed {1} from buffer.", Id, voltage);
+                //Console.WriteLine("Task_Dendrite {0} consumed {1} from buffer.", Id, voltage);
             }//end while
 
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
@@ -88,7 +88,7 @@ namespace SynapseModel3
                 int difference = dendrite.GetMembranePotentialDifference();
                 body.AddToBuffer(difference);
 
-                Console.WriteLine("Task_Dendrite {0} produced {1} to cell body buffer.", Id, difference);
+                //Console.WriteLine("Task_Dendrite {0} produced {1} to cell body buffer.", Id, difference);
             }//end while
 
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
@@ -102,7 +102,7 @@ namespace SynapseModel3
             {
                 Thread.Sleep(dendrite.DecayFrequency);
                 dendrite.DecayMembranePotential();
-                Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dendrite.MembranePotential);
+                //Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dendrite.MembranePotential);
             }
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }

@@ -92,10 +92,10 @@ namespace SynapseModel3
             while (DateTime.Now - start < runLength)
             {
                 Thread.Sleep(axon.ProductionFrequency);
-                Neurotransmitter newest = new Neurotransmitter(-10);
+                Neurotransmitter newest = new Neurotransmitter(50);
                 dendrite.AddToBuffer(newest);
 
-                Console.WriteLine("Task_InputAxon {0} added {1} to dendrite {2} buffer.", Id, newest.Charge, dendrite.Id);
+                //Console.WriteLine("Task_InputAxon {0} added {1} to dendrite {2} buffer.", Id, newest.Charge, dendrite.Id);
 
             }//end while
 

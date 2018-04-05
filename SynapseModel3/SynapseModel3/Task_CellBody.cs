@@ -64,7 +64,7 @@ namespace SynapseModel3
             while (DateTime.Now - start < runLength)
             {
                 int voltage = body.TryRemoveFromBuffer();
-                Console.WriteLine("Task_CellBody {0} removed {1} from buffer.", Id, voltage);
+                //Console.WriteLine("Task_CellBody {0} removed {1} from buffer.", Id, voltage);
             }//end while
 
             Console.WriteLine("Task_CellBody {0} is done.", Id);
@@ -78,7 +78,7 @@ namespace SynapseModel3
             {
                 Thread.Sleep(body.DecayFrequency);
                 body.DecayMembranePotential();
-                Console.WriteLine("Task_CellBody {0} decayed cell body membrane potential to {1}.", Id, body.MembranePotential);
+                //Console.WriteLine("Task_CellBody {0} decayed cell body membrane potential to {1}.", Id, body.MembranePotential);
             }
             Console.WriteLine("Task_CellBody {0} is done.", Id);
         }

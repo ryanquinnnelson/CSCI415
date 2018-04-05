@@ -10,7 +10,7 @@ namespace SynapseModel3
     {
         //constants
         public const int RESTING_POTENTIAL = -70000; //Volts
-        public const int RESTORE_INCREMENT = 500;
+        public const int RESTORE_INCREMENT = 50;
 
 
         //fields
@@ -143,13 +143,13 @@ namespace SynapseModel3
 
 
         //public methods
-        public void AddToBuffer(Neurotransmitter nt) //tested
+        public void AddToBuffer(Neurotransmitter nt)
         {
             buffer.Add(nt);
             messenger.AddEvent(DateTime.Now);
 
             //check whether dendrite growth state threshold reached
-            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
+            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now)) //??messenger has problems if being read while being written to
             {
                 SetGrowthState();
             }
