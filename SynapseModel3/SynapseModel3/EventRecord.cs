@@ -4,8 +4,8 @@ namespace SynapseModel3
     public class EventRecord : IComparable<EventRecord>
     {
         //fields
-        double time;
-        int membranePotential;
+        private int membranePotential;
+        private double time;
 
 
         //constructors
@@ -20,18 +20,6 @@ namespace SynapseModel3
 
 
         //properties
-        public double Time //tested
-        {
-            get
-            {
-                return this.time;
-            }
-            private set
-            {
-                time = value;
-            }
-        }
-
         public int MembranePotential //tested
         {
             get
@@ -41,6 +29,18 @@ namespace SynapseModel3
             private set
             {
                 membranePotential = value;
+            }
+        }
+
+        public double Time //tested
+        {
+            get
+            {
+                return this.time;
+            }
+            private set
+            {
+                time = value;
             }
         }
 

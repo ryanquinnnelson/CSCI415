@@ -10,74 +10,64 @@ namespace SynapseModel3
     {
         //constants
         public const int RESTING_POTENTIAL = -70000; //Volts
-        public const int RESTORE_INCREMENT = 50;
 
 
         //fields
-        private int state; //0 no growth; 1 growth
-        private int id;
-        private int type; //0 is proximal; 1 is basal; 2 is apical
-        private int membranePotential; //Volts
         private BlockingCollection<Neurotransmitter> buffer; //shared
-        private SecondaryMessenger messenger;
-        private int numAvailableSynapses;
-        private List<Synapse> synapses;
-        private int nextSynapseId;
         private int decayFrequency;
+        private int id;
+        private int membranePotential; //Volts
+        private SecondaryMessenger messenger;
+        private int nextSynapseId;
+        private int numAvailableSynapses;
+        private int numSynapsesToAddInGrowthEvent;
         private int productionFrequency;
+        private int restoreIncrement;
+        private int state; //0 no growth; 1 growth
+        private List<Synapse> synapses;
+        private int type; //0 is proximal; 1 is basal; 2 is apical
 
 
         //constructors
-        public Dendrite(int id, int type, int numAvailableSynapses, int decayFrequency, int productionFrequency) //tested
+        public Dendrite(int id,
+                        int type,
+                        int decayFrequency,
+                        int productionFrequency,
+                        int restoreIncrement,
+                        int numSynapsesToAddInGrowthEvent,
+                        TimeSpan secondaryMessengerWindow,
+                        int secondaryMessengerFrequencyTrigger,
+                        int numStartingSynapses)
         {
             state = 0;
-            this.id = id;
-            this.type = type;
-            this.numAvailableSynapses = numAvailableSynapses;
+            nextSynapseId = 0;
             membranePotential = RESTING_POTENTIAL;
             buffer = new BlockingCollection<Neurotransmitter>(new ConcurrentQueue<Neurotransmitter>());
+            synapses = new List<Synapse>();
 
+            this.id = id;
+            this.type = type;
             this.decayFrequency = decayFrequency;
             this.productionFrequency = productionFrequency;
+            this.restoreIncrement = restoreIncrement;
+            this.numSynapsesToAddInGrowthEvent = numSynapsesToAddInGrowthEvent;
+            messenger = new SecondaryMessenger(DateTime.Now, secondaryMessengerFrequencyTrigger, secondaryMessengerWindow);
+            this.numAvailableSynapses = numStartingSynapses;
 
-            //look at the previous 2 seconds
-            int days = 0;
-            int hours = 0;
-            int minutes = 0;
-            int seconds = 2;
-            int milliseconds = 0;
-            TimeSpan window = new TimeSpan(days, hours, minutes, seconds, milliseconds);
-
-            messenger = new SecondaryMessenger(DateTime.Now, 100, window);
-            synapses = new List<Synapse>();
-            nextSynapseId = 0;
-
-            CreateSynapses(numAvailableSynapses);
+            CreateSynapses(numStartingSynapses);
         }
 
 
         //properties
-        public int NumAvailableSynapses //tested
+        public int DecayFrequency
         {
             get
             {
-                return numAvailableSynapses;
+                return this.decayFrequency;
             }
             private set
             {
-                numAvailableSynapses = value;
-            }
-        }
-
-        public int Type //tested
-        {
-            get
-            {
-                return type;
-            }
-            private set
-            {
-                type = value;
+                decayFrequency = value;
             }
         }
 
@@ -93,18 +83,6 @@ namespace SynapseModel3
             }
         }
 
-        public int State //tested
-        {
-            get
-            {
-                return this.state;
-            }
-            private set
-            {
-                state = value;
-            }
-        }
-
         public int MembranePotential //tested
         {
             get
@@ -117,15 +95,15 @@ namespace SynapseModel3
             }
         }
 
-        public int DecayFrequency 
+        public int NumAvailableSynapses //tested
         {
             get
             {
-                return this.decayFrequency;
+                return numAvailableSynapses;
             }
             private set
             {
-                decayFrequency = value;
+                numAvailableSynapses = value;
             }
         }
 
@@ -141,34 +119,111 @@ namespace SynapseModel3
             }
         }
 
+        public int State //tested
+        {
+            get
+            {
+                return this.state;
+            }
+            private set
+            {
+                state = value;
+            }
+        }
+
+        public int Type //tested
+        {
+            get
+            {
+                return type;
+            }
+            private set
+            {
+                type = value;
+            }
+        }
+
 
         //public methods
         public void AddToBuffer(Neurotransmitter nt)
         {
             buffer.Add(nt);
-            messenger.AddEvent(DateTime.Now);
+
+            //decide when to add events to SecondaryMessenger
+
 
             //check whether dendrite growth state threshold reached
-            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now)) //??messenger has problems if being read while being written to
+            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
             {
                 SetGrowthState();
             }
         }
 
-        public void DecayMembranePotential() //tested
+        public void DecayMembranePotential()
         {
             if (membranePotential < RESTING_POTENTIAL)
             {
-                Interlocked.Add(ref membranePotential, RESTORE_INCREMENT);
+                Interlocked.Add(ref membranePotential, restoreIncrement);
             }
             else if (membranePotential > RESTING_POTENTIAL)
             {
-                Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+                Interlocked.Add(ref membranePotential, -restoreIncrement);
             }
             else
             {
                 //do nothing
             }
+        }
+
+        public bool FormSynapseConnection(Synapse synapse, InputAxon axon)
+        {
+            if (numAvailableSynapses > 0 && !synapse.IsConnectionAlreadyFormed())
+            {
+                synapse.Connect(axon);
+                Interlocked.Decrement(ref numAvailableSynapses);
+                return true;
+            }
+
+            return false;
+        }
+
+        public int GetMembranePotentialDifference()
+        {
+            return (membranePotential - RESTING_POTENTIAL);
+        }
+
+
+        public Synapse GetOpenSynapse() //tested
+        {
+            Synapse open = null;
+
+            foreach (Synapse s in synapses)
+            {
+                if (!s.IsConnectionAlreadyFormed())
+                {
+                    open = s;
+                    break; //stop searching
+                }
+            }
+
+            return open;
+        }
+
+        public Synapse GetSynapse(int id) //tested
+        {
+            Synapse open = null;
+
+            foreach (Synapse s in synapses)
+            {
+                if (s.Id == id)
+                {
+                    open = s;
+                    break; //stop searching
+                }
+            }
+
+            return open;
+
         }
 
         public int TryRemoveFromBuffer() //tested
@@ -192,58 +247,17 @@ namespace SynapseModel3
 
         }
 
-        public Synapse GetSynapse(int id) //tested
-        {
-            Synapse open = null;
-
-            foreach (Synapse s in synapses)
-            {
-                if (s.Id == id)
-                {
-                    open = s;
-                    break; //stop searching
-                }
-            }
-
-            return open;
-
-        }
-
-        public Synapse GetOpenSynapse() //tested
-        {
-            Synapse open = null;
-
-            foreach (Synapse s in synapses)
-            {
-                if (!s.IsConnectionAlreadyFormed())
-                {
-                    open = s;
-                    break; //stop searching
-                }
-            }
-
-            return open;
-        }
-
-        public bool FormSynapseConnection(Synapse synapse, InputAxon axon) //tested
-        {
-            if (numAvailableSynapses > 0 && !synapse.IsConnectionAlreadyFormed())
-            {
-                synapse.Connect(axon);
-                numAvailableSynapses--;
-                return true;
-            }
-
-            return false;
-        }
-
-        public int GetMembranePotentialDifference(){
-            return (membranePotential - RESTING_POTENTIAL);
-        }
-
-
 
         //private helper methods
+        private void CreateSynapses(int num) //tested
+        {
+            for (int i = 0; i < num; i++)
+            {
+                Synapse newest = new Synapse(nextSynapseId++);
+                synapses.Add(newest);
+            }
+        }
+
         private void SetGrowthState() //tested
         {
             //Console.WriteLine("SetGrowthState()");
@@ -258,15 +272,6 @@ namespace SynapseModel3
         {
             //Console.WriteLine("SetNoGrowthState()");
             Interlocked.CompareExchange(ref state, 0, 1);
-        }
-
-        private void CreateSynapses(int num) //tested
-        {
-            for (int i = 0; i < num; i++)
-            {
-                Synapse newest = new Synapse(nextSynapseId++);
-                synapses.Add(newest);
-            }
         }
 
         private string SynapsesListToString() //tested
@@ -295,7 +300,7 @@ namespace SynapseModel3
 
             //action inside dendrite
             numAvailableSynapses++;
-            CreateSynapses(1);
+            CreateSynapses(numSynapsesToAddInGrowthEvent);
 
             //restore no growth state
             SetNoGrowthState();
@@ -318,68 +323,66 @@ namespace SynapseModel3
         public event EventHandler<EventArgs_DendriteGrowth> DendriteGrowthEvent;
 
 
-
-
         ////tests
         //public static void Main()
         //{
-            //Console.WriteLine("Test of Constructor 1");
-            //Dendrite d = new Dendrite(1, 1, 5);
-            //Console.WriteLine(d);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of Constructor 1");
+        //    Dendrite d = new Dendrite(1, 1, 5, 100, 50, 1, new TimeSpan(0, 0, 2), 100, 1);
+        //    Console.WriteLine(d);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of GetType()");
-            //Console.WriteLine(d.Type);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of GetType()");
+        //    Console.WriteLine(d.Type);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of GetId()");
-            //Console.WriteLine(d.Id);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of GetId()");
+        //    Console.WriteLine(d.Id);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of GetState()");
-            //Console.WriteLine(d.State);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of GetState()");
+        //    Console.WriteLine(d.State);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of GetNumAvailableSynapses()");
-            //Console.WriteLine(d.NumAvailableSynapses);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of GetNumAvailableSynapses()");
+        //    Console.WriteLine(d.NumAvailableSynapses);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of GetMembranePotential()");
-            //Console.WriteLine(d.MembranePotential);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of GetMembranePotential()");
+        //    Console.WriteLine(d.MembranePotential);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of AddToBuffer()");
-            //d.AddToBuffer(new Neurotransmitter(-10));
-            //Console.WriteLine("Buffer count: " + d.buffer.Count);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of AddToBuffer()");
+        //    d.AddToBuffer(new Neurotransmitter(-10));
+        //    Console.WriteLine("Buffer count: " + d.buffer.Count);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of TryRemoveFromBuffer()");
-            //Console.WriteLine(d.TryRemoveFromBuffer());
-            //Console.WriteLine("Buffer count: " + d.buffer.Count);
-            //Console.WriteLine();
+        //    Console.WriteLine("Test of TryRemoveFromBuffer()");
+        //    Console.WriteLine(d.TryRemoveFromBuffer());
+        //    Console.WriteLine("Buffer count: " + d.buffer.Count);
+        //    Console.WriteLine();
 
-            //Console.WriteLine("Test of DecayMembranePotential()");
-            //d.MembranePotential = -90000;
-            //d.DecayMembranePotential();
-            //Console.WriteLine(d.MembranePotential);
-            //Console.WriteLine();
-            //d.MembranePotential = -70000;
+        //    Console.WriteLine("Test of DecayMembranePotential()");
+        //    d.MembranePotential = -90000;
+        //    d.DecayMembranePotential();
+        //    Console.WriteLine(d.MembranePotential);
+        //    Console.WriteLine();
+        //    d.MembranePotential = -70000;
 
-            //d.messenger = new SecondaryMessenger(DateTime.Now, 1, new TimeSpan(0, 0, 5));
-            //d.AddToBuffer(new Neurotransmitter(-10));
+        //    d.messenger = new SecondaryMessenger(DateTime.Now, 1, new TimeSpan(0, 0, 5));
+        //    d.AddToBuffer(new Neurotransmitter(-10));
 
         //    Console.WriteLine("Test of GetOpenSynapse()");
         //    Console.WriteLine(d.GetOpenSynapse());
         //    Console.WriteLine();
 
         //    Console.WriteLine("Test of GetSynapse()");
-        //    Console.WriteLine(d.GetSynapse(1));
+        //    Console.WriteLine(d.GetSynapse(0));
         //    Console.WriteLine();
 
         //    Console.WriteLine("Test of FormSynapseConnection()");
-        //    Synapse current = d.GetSynapse(1);
-        //    Console.WriteLine(d.FormSynapseConnection(current, new InputAxon(1,1,0)));
-        //    Console.WriteLine(d.GetSynapse(1));
+        //    Synapse current = d.GetSynapse(0);
+        //    Console.WriteLine(d.FormSynapseConnection(current, new InputAxon(1, 1, 0)));
+        //    Console.WriteLine(d.GetSynapse(0));
         //    Console.WriteLine();
 
         //    Console.WriteLine("Test of RaiseDendriteGrowthEvent()");

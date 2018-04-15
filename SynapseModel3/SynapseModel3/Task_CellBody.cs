@@ -6,8 +6,8 @@ namespace SynapseModel3
     public class Task_CellBody
     {
         //fields
-        private int id;
         private CellBody body;
+        private int id;
         private TimeSpan runLength;
 
 
@@ -23,18 +23,6 @@ namespace SynapseModel3
 
 
         //properties
-        public int Id
-        {
-            get
-            {
-                return this.id;
-            }
-            private set
-            {
-                id = value;
-            }
-        }
-
         public CellBody Body
         {
             get
@@ -48,14 +36,22 @@ namespace SynapseModel3
             }
         }
 
-
-        //public methods
-        public override String ToString() //tested
+        public int Id
         {
-            return "Task_CellBody{ id=" + Id + " }";
+            get
+            {
+                return this.id;
+            }
+            private set
+            {
+                id = value;
+            }
         }
 
 
+
+
+        //public methods
         public void Consume()
         {
             DateTime start = DateTime.Now;
@@ -81,6 +77,11 @@ namespace SynapseModel3
                 //Console.WriteLine("Task_CellBody {0} decayed cell body membrane potential to {1}.", Id, body.MembranePotential);
             }
             Console.WriteLine("Task_CellBody {0} is done.", Id);
+        }
+
+        public override String ToString() //tested
+        {
+            return "Task_CellBody{ id=" + Id + " }";
         }
 
 

@@ -6,10 +6,10 @@ namespace SynapseModel3
     public class Task_Dendrite
     {
         //fields
-        private int id;
-        private Dendrite dendrite;
-        private TimeSpan runLength;
         private CellBody body;
+        private Dendrite dendrite;
+        private int id;
+        private TimeSpan runLength;
 
 
         //constructors
@@ -25,15 +25,15 @@ namespace SynapseModel3
 
 
         //properties
-        public int Id
+        public CellBody Body
         {
             get
             {
-                return this.id;
+                return this.body;
             }
             private set
             {
-                id = value;
+                body = value;
             }
         }
 
@@ -49,22 +49,20 @@ namespace SynapseModel3
             }
         }
 
-        public CellBody Body{
-            get{
-                return this.body;
+        public int Id
+        {
+            get
+            {
+                return this.id;
             }
-            private set{
-                body = value;
+            private set
+            {
+                id = value;
             }
         }
 
 
         //public methods
-        public override String ToString()
-        {
-            return "Task_Dendrite{ id=" + Id + " }";
-        }
-
         public void Consume()
         {
             DateTime start = DateTime.Now;
@@ -75,6 +73,19 @@ namespace SynapseModel3
                 //Console.WriteLine("Task_Dendrite {0} consumed {1} from buffer.", Id, voltage);
             }//end while
 
+            Console.WriteLine("Task_Dendrite {0} is done.", Id);
+        }
+
+        public void Decay()
+        {
+            DateTime start = DateTime.Now;
+            Console.WriteLine("Task_Dendrite {0} is decaying...", Id);
+            while (DateTime.Now - start < runLength)
+            {
+                Thread.Sleep(dendrite.DecayFrequency);
+                dendrite.DecayMembranePotential();
+                //Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dendrite.MembranePotential);
+            }
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }
 
@@ -94,21 +105,12 @@ namespace SynapseModel3
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }
 
-        public void Decay()
+        public override String ToString()
         {
-            DateTime start = DateTime.Now;
-            Console.WriteLine("Task_Dendrite {0} is decaying...", Id);
-            while (DateTime.Now - start < runLength)
-            {
-                Thread.Sleep(dendrite.DecayFrequency);
-                dendrite.DecayMembranePotential();
-                //Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dendrite.MembranePotential);
-            }
-            Console.WriteLine("Task_Dendrite {0} is done.", Id);
+            return "Task_Dendrite{ id=" + Id + " }";
         }
 
-
-
+       
         ////tests
         //public static void Main()
         //{

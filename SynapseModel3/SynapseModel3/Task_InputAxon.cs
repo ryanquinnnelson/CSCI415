@@ -6,8 +6,8 @@ namespace SynapseModel3
     public class Task_InputAxon
     {
         //fields
-        private Dendrite dendrite;
         private InputAxon axon;
+        private Dendrite dendrite;
         private int id;
         private TimeSpan runLength;
 
@@ -32,17 +32,7 @@ namespace SynapseModel3
 
 
         //properties
-        public int Id //tested
-        {
-            get
-            {
-                return this.id;
-            }
-            private set
-            {
-                id = value;
-            }
-        }
+
 
         public InputAxon Axon //tested
         {
@@ -71,13 +61,25 @@ namespace SynapseModel3
             }
         }
 
-        //public methods
-        public override String ToString() //tested
+        public int Id //tested
         {
-            return "Task_InputAxon{ id=" + Id + ", runLength=" + runLength
-                + ", inputAxon=" + axon + ", dendrite=" + dendrite + " }";
+            get
+            {
+                return this.id;
+            }
+            private set
+            {
+                id = value;
+            }
         }
 
+
+        //public methods
+        public void ConnectAndProduce()
+        {
+            //find an open synapse if possible, otherwise terminate
+            //??to be implemented
+        }
 
         public void Produce() //tested
         {
@@ -102,10 +104,10 @@ namespace SynapseModel3
             Console.WriteLine("Task_InputAxon {0} is done.", Id);
         }
 
-        public void ConnectAndProduce()
+        public override String ToString() //tested
         {
-            //find an open synapse if possible, otherwise terminate
-            //??to be implemented
+            return "Task_InputAxon{ id=" + Id + ", runLength=" + runLength
+                + ", inputAxon=" + axon + ", dendrite=" + dendrite + " }";
         }
 
 
