@@ -9,21 +9,25 @@ namespace SynapseModel3
     public class CellBody
     {
         //constants
+        private const int ABSOLUTE_REFRACTORY_PERIOD = 5; // milliseconds
+        private const int DEPOLARIZATION_SPIKE = +30000; //Volts
+        private const int HYPERPOLARIZATION_SPIKE = -100000; //Volts
         private const int RESTING_POTENTIAL = -70000; //Volts
         private const int THRESHOLD_POTENTIAL = -50000; //Volts
-        private const int RESTORE_INCREMENT = 50;
 
 
         //fields
         private BlockingCollection<int> buffer; //shared
+        private int decayFrequency;
         private int membranePotential; //Volts
         private ConcurrentBag<EventRecord> outputs;
+        private int restoreIncrement;
         private DateTime start;
         private int state; //0 is resting state, 1 is action potential
-        private int decayFrequency;
+
 
         //constructors
-        public CellBody(DateTime start, int decayFrequency) //tested
+        public CellBody(DateTime start, int decayFrequency, int restoreIncrement)
         {
             buffer = new BlockingCollection<int>(new ConcurrentQueue<int>());
             membranePotential = RESTING_POTENTIAL;
@@ -31,10 +35,23 @@ namespace SynapseModel3
             this.start = start;
             state = 0;
             this.decayFrequency = decayFrequency;
+            this.restoreIncrement = restoreIncrement;
         }
 
 
         //properties
+        public int DecayFrequency
+        {
+            get
+            {
+                return this.decayFrequency;
+            }
+            private set
+            {
+                decayFrequency = value;
+            }
+        }
+
         public int MembranePotential //tested
         {
             get
@@ -44,6 +61,18 @@ namespace SynapseModel3
             private set
             {
                 membranePotential = value;
+            }
+        }
+
+        public int RestoreIncrement
+        {
+            get
+            {
+                return this.restoreIncrement;
+            }
+            private set
+            {
+                restoreIncrement = value;
             }
         }
 
@@ -59,14 +88,9 @@ namespace SynapseModel3
             }
         }
 
-        public int DecayFrequency{
-            get{
-                return this.decayFrequency;
-            }
-            private set{
-                decayFrequency = value;
-            }
-        }
+
+
+
 
 
         //public methods
@@ -75,15 +99,15 @@ namespace SynapseModel3
             buffer.Add(voltage);
         }
 
-        public void DecayMembranePotential() //tested
+        public void DecayMembranePotential()
         {
             if (state == 0 && membranePotential < RESTING_POTENTIAL)
             {
-                int current = Interlocked.Add(ref membranePotential, RESTORE_INCREMENT);
+                int current = Interlocked.Add(ref membranePotential, restoreIncrement);
             }
             else if (state == 0 && membranePotential > RESTING_POTENTIAL)
             {
-                int current = Interlocked.Add(ref membranePotential, -RESTORE_INCREMENT);
+                int current = Interlocked.Add(ref membranePotential, -restoreIncrement);
             }
             else
             {
@@ -109,6 +133,13 @@ namespace SynapseModel3
             return list;
         }
 
+        public override string ToString() //tested
+        {
+            return "CellBody{ start=" + start + ", state=" + state
+                + ", membranePotential=" + membranePotential + ", buffer="
+                + buffer + ", outputs=" + OutputsListToString() + " }";
+        }
+
         public int TryRemoveFromBuffer() //tested
         {
             //Console.WriteLine("TryRemoveFromBuffer()");
@@ -131,12 +162,6 @@ namespace SynapseModel3
             return voltage;
         }
 
-        public override string ToString() //tested
-        {
-            return "CellBody{ start=" + start + ", state=" + state
-                + ", membranePotential=" + membranePotential + ", buffer="
-                + buffer + ", outputs=" + OutputsListToString() + " }";
-        }
 
 
         //private helper methods
@@ -145,19 +170,37 @@ namespace SynapseModel3
             return membranePotential >= THRESHOLD_POTENTIAL;
         }
 
-        private void PerformMembranePotentialSpike() //tested
+        private string OutputsListToString() //tested
+        {
+            List<EventRecord> outputList = GetOutputsAsList();
+            StringBuilder sb = new StringBuilder("[");
+            foreach (EventRecord e in outputList)
+            {
+                sb.Append(e);
+                sb.Append(",");
+            }
+            if (outputList.Count > 0)
+            {
+                sb.Remove(sb.Length - 1, 1);
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        private void PerformMembranePotentialSpike()
         {
             //Console.WriteLine("PerformMembranePotentialSpike()");
             int current;
-            current = Interlocked.Exchange(ref membranePotential, +30000);
-            StoreAsOutput(30000);
+            current = Interlocked.Exchange(ref membranePotential, DEPOLARIZATION_SPIKE);
+            StoreAsOutput(DEPOLARIZATION_SPIKE);
 
-            current = Interlocked.Exchange(ref membranePotential, -100000);
-            StoreAsOutput(-100000);
-            Thread.Sleep(1); //absolute refractory period
+            current = Interlocked.Exchange(ref membranePotential, HYPERPOLARIZATION_SPIKE);
+            StoreAsOutput(HYPERPOLARIZATION_SPIKE);
+            Thread.Sleep(ABSOLUTE_REFRACTORY_PERIOD); //absolute refractory period
         }
 
-        private void SetActionPotentialState() //tested
+        private void SetActionPotentialState()
         {
             //Console.WriteLine("SetActionPotentialState()");
             int original = Interlocked.CompareExchange(ref state, 1, 0);
@@ -179,27 +222,10 @@ namespace SynapseModel3
             outputs.Add(new EventRecord(ts, potential));
         }
 
-        private string OutputsListToString() //tested
-        {
-            List<EventRecord> outputList = GetOutputsAsList();
-            StringBuilder sb = new StringBuilder("[");
-            foreach (EventRecord e in outputList)
-            {
-                sb.Append(e);
-                sb.Append(",");
-            }
-            if (outputList.Count > 0)
-            {
-                sb.Remove(sb.Length - 1, 1);
-            }
-
-            sb.Append("]");
-            return sb.ToString();
-        }
 
 
         //Action Potential event code
-        private void RaiseActionPotentialEvent(DateTime when) //tested
+        private void RaiseActionPotentialEvent(DateTime when)
         {
             //event
             Console.WriteLine("Cell Body raises action potential event.");
@@ -230,7 +256,7 @@ namespace SynapseModel3
         //public static void Main()
         //{
         //    Console.WriteLine("Test of Constructor 1");
-        //    CellBody c = new CellBody(DateTime.Now);
+        //    CellBody c = new CellBody(DateTime.Now, 100, 50);
         //    Console.WriteLine(c);
         //    Console.WriteLine("Buffer count: " + c.buffer.Count);
         //    Console.WriteLine();

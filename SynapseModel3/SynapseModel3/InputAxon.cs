@@ -5,8 +5,8 @@ namespace SynapseModel3
     {
         //fields
         private int id;
-        private int productionFrequency;
         private int inputType; //0 feedforward; 1 context; 2 feedback
+        private int productionFrequency;
 
 
         //constructors
@@ -31,18 +31,6 @@ namespace SynapseModel3
             }
         }
 
-        public int ProductionFrequency //tested
-        {
-            get
-            {
-                return this.productionFrequency;
-            }
-            private set
-            {
-                productionFrequency = value;
-            }
-        }
-
         public int InputType //tested
         {
             get
@@ -52,6 +40,18 @@ namespace SynapseModel3
             private set
             {
                 inputType = value;
+            }
+        }
+
+        public int ProductionFrequency //tested
+        {
+            get
+            {
+                return this.productionFrequency;
+            }
+            private set
+            {
+                productionFrequency = value;
             }
         }
 

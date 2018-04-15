@@ -49,11 +49,6 @@ namespace SynapseModel3
 
 
         //public methods
-        public bool IsConnectionAlreadyFormed() //tested
-        {
-            return !(axon == null);
-        }
-
         public bool Connect(InputAxon axon) //tested
         {
             if (!IsConnectionAlreadyFormed())
@@ -62,6 +57,11 @@ namespace SynapseModel3
                 return true;
             }
             return false;
+        }
+
+        public bool IsConnectionAlreadyFormed() //tested
+        {
+            return !(axon == null);
         }
 
         public override string ToString() //tested

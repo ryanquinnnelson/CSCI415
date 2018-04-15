@@ -7,10 +7,10 @@ namespace SynapseModel3
     public class SecondaryMessenger
     {
         //fields
-        private int frequencyTrigger;
-        private TimeSpan window;
-        private DateTime start;
         private List<DateTime> events;
+        private int frequencyTrigger;
+        private DateTime start;
+        private TimeSpan window;
 
 
         //constructors

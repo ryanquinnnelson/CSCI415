@@ -9,5 +9,7 @@
 7. Add randomness to inhibitory, excitatory inputs
 8. Add graphing capability
 9. Make EventRecords collection in CellBody concurrent
-10. Make synapses collection in Dendrite concurrent
+10. Make synapses collection in Dendrite concurrent - dictionary?
 11. Check over all other non-concurrent collections to check if they are shared resources.
+12. design logic of key methods in ProcessManager class
+13. revise secondary messenger to use concurrent collection

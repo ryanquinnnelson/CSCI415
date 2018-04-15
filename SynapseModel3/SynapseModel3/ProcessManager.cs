@@ -20,10 +20,34 @@ namespace SynapseModel3
         {
             Console.WriteLine("Running Neuron Model...");
 
+            //look at the previous 2 seconds
+            int days = 0;
+            int hours = 0;
+            int minutes = 0;
+            int seconds = 2;
+            int milliseconds = 0;
+            TimeSpan window = new TimeSpan(days, hours, minutes, seconds, milliseconds);
+
+
             //initialize variables
-            neuron = new Neuron(10, 10, 10); //maybe move secondary messenger configuration out here too??
+            neuron = new Neuron(10,             //*cell body decay frequency
+                                50,             //*cell body restore increment
+                                window,         //*neuron secondary messenger window
+                                100,            //*neuron secondary messenger frequency trigger
+                                1,              //*number of dendrites to add in growth event
+                                new int[]{0},   //*types of dendrites to add in growth event
+                                10,             //*dendrite decay frequency
+                                100,            //*dendrite production frequency
+                                96,             //*dendrite restore increment
+                                1,              //*number of synapses to add in growth event
+                                window,         //*dendrite secondary messenger window
+                                100,            //*dendrite secondary messenger frequency trigger
+                                1,              //*number of starting synapses per dendrite
+                                1,              //*number of starting dendrites
+                                new int[]{0});  //*types of dendrites to start
+            
             tasks = new List<Task>();
-            runLength = new TimeSpan(0, 0, 2);
+            runLength = new TimeSpan(0, 0, 10);
             start = DateTime.Now;
             nextInputAxonId = 0;
             inputs = new List<InputAxon>();
