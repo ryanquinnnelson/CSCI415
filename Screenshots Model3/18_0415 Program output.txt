@@ -1,0 +1,270 @@
+Last login: Sun Apr 15 20:45:16 on ttys000
+Ryans-Retina-MacBook-Pro:~ Ryan$ bash -c 'clear; cd "/Users/Ryan/Desktop/CSCI415/SynapseModel3/SynapseModel3/bin/Debug"; "/Library/Frameworks/Mono.framework/Versions/5.8.1/bin/mono32"  --debug --debugger-agent=transport=dt_socket,address=127.0.0.1:57397  "/Users/Ryan/Desktop/CSCI415/SynapseModel3/SynapseModel3/bin/Debug/SynapseModel3.exe" ; echo $? > /var/folders/wq/lvq5kkh91ss4hj4sj2735d400000gn/T/tmp237a67ed.tmp; echo; read -p "Press any key to continue..." -n1; exit'; exit
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Running Neuron Model...
+Task_CellBody 0 is created.
+Task_Dendrite 0 is created.
+Task_Dendrite 0 is created.
+Task_Dendrite 0 is created.
+Task_CellBody 0 is created.
+Task_Dendrite 1 is created.
+Task_Dendrite 0 is consuming...
+Task_CellBody 0 is consuming...
+Task_Dendrite 0 is producing...
+Task_Dendrite 1 is producing...
+Task_Dendrite 0 is decaying...
+Task_CellBody 0 is decaying...
+Task_AxonInput 0 is created.
+Task_AxonInput 1 is created.
+Task_InputAxon 0 is producing...
+Task_InputAxon 1 is producing...
+Cell Body raises action potential event.
+Neuron receives action potential event.
+Cell Body raises action potential event.
+Neuron receives action potential event.
+Neuron raises cell growth event.
+ProcessManager received cell growth event.
+Cell Body raises action potential event.
+Neuron receives action potential event.
+Cell Body raises action potential event.
+Neuron receives action potential event.
+Task_Dendrite 0 is done.
+Task_Dendrite 0 is done.
+Task_Dendrite 1 is done.
+Task_CellBody 0 is done.
+Task_Dendrite 0 is done.
+Task_CellBody 0 is done.
+Task_InputAxon 1 is done.
+Task_InputAxon 0 is done.
+
+0.177	-70000
+0.182	-70000
+0.277	-70000
+0.277	-70000
+0.378	-70000
+0.378	-70000
+0.479	-70000
+0.479	-70000
+0.581	-70000
+0.581	-70000
+0.681	-70000
+0.681	-70000
+0.782	-70000
+0.783	-70000
+0.883	-70000
+0.884	-70000
+0.985	-70000
+0.985	-70000
+1.187	-70000
+1.187	-70000
+1.288	-70000
+1.289	-70000
+1.39	-70000
+1.39	-70000
+1.491	-70000
+1.491	-70000
+1.592	-69946
+1.592	-69892
+1.693	-69970
+1.693	-69898
+1.793	-69908
+1.793	-69818
+1.86	-70000
+1.86	-70000
+1.893	-69860
+1.894	-69752
+1.995	-69750
+1.995	-69876
+2.197	-69800
+2.197	-69638
+2.298	-69808
+2.299	-69628
+2.4	-69582
+2.4	-69780
+2.501	-69816
+2.501	-69600
+2.602	-69532
+2.602	-69766
+2.703	-69778
+2.703	-69524
+2.804	-69702
+2.804	-69430
+2.905	-69590
+2.905	-69300
+2.96	-69856
+2.96	-69712
+3.108	-69258
+3.108	-68932
+3.209	-68694
+3.209	-69038
+3.31	-68782
+3.31	-68420
+3.411	-68490
+3.411	-68110
+3.512	-68162
+3.513	-67764
+3.614	-67798
+3.614	-67382
+3.7	-69442
+3.7	-69134
+3.715	-67398
+3.715	-66964
+3.816	-66962
+3.816	-66510
+3.917	-66490
+3.918	-66020
+4.12	-64932
+4.12	-65438
+4.19	-65982
+4.19	-65494
+4.221	-64858
+4.221	-64334
+4.322	-64242
+4.322	-63700
+4.423	-63590
+4.424	-63080
+4.524	-63002
+4.524	-62474
+4.625	-62378
+4.625	-61832
+4.725	-61154
+4.725	-61718
+4.826	-61022
+4.826	-60440
+4.927	-60264
+4.927	-59638
+5.127	-57874
+5.127	-58536
+5.227	-57618
+5.228	-56912
+5.27	-59418
+5.27	-58748
+5.329	-55914
+5.329	-56638
+5.428	-55674
+5.43	-54932
+5.528	-54648
+5.531	-53888
+5.629	-53560
+5.632	-52782
+5.73	-52436
+5.733	-51640
+5.832	-51276
+5.834	-50462
+5.933	-50080
+5.936	-49248
+5.941	30000
+5.942	-100000
+6.135	-67882
+6.137	-67114
+6.236	-66628
+6.238	-65816
+6.337	-65386
+6.34	-69150
+6.34	-64480
+6.37	-68350
+6.439	-64006
+6.441	-63082
+6.54	-62616
+6.542	-61674
+6.641	-61164
+6.643	-60204
+6.742	-59676
+6.743	-58698
+6.843	-58152
+6.845	-57156
+6.944	-56592
+6.946	-55578
+7.147	-53364
+7.148	-52314
+7.248	-51696
+7.249	-50628
+7.349	-49992
+7.35	30000
+7.351	-100000
+7.357	-68914
+7.45	-54996
+7.45	-68210
+7.45	-67106
+7.47	-53964
+7.55	-66508
+7.55	-65410
+7.651	-63576
+7.651	-64718
+7.752	-61706
+7.752	-62866
+7.853	-60978
+7.853	-59800
+7.954	-59054
+7.954	-57858
+8.156	-55098
+8.156	-53866
+8.257	-53066
+8.257	-51816
+8.358	-49780
+8.358	-51048
+8.358	30000
+8.359	-100000
+8.459	-68764
+8.459	-67528
+8.55	-57094
+8.55	-55880
+8.56	-66724
+8.56	-65470
+8.661	-64596
+8.662	-63272
+8.763	-62380
+8.763	-61038
+8.864	-58918
+8.864	-60228
+8.965	-56712
+8.965	-58040
+9.167	-53556
+9.167	-52192
+9.268	-51260
+9.268	-49878
+9.268	30000
+9.27	-100000
+9.369	-68600
+9.37	-67200
+9.471	-64710
+9.471	-66180
+9.572	-62184
+9.572	-63672
+9.66	-55816
+9.66	-54470
+9.673	-61128
+9.673	-59622
+9.774	-58548
+9.774	-57024
+9.875	-55932
+9.875	-54390
+9.976	-53280
+9.977	-51720
+10.77	-50618
+Stopped Neuron Model.
+
+Press any key to continue... logout
+Saving session...
+...copying shared history...
+...saving history...truncating history files...
+...completed.
+
+[Process completed]
+
