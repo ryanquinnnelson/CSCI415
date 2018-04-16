@@ -22,6 +22,7 @@ namespace SynapseModel3
         private int numSynapsesToAddInGrowthEvent;
         private int productionFrequency;
         private int restoreIncrement;
+        private int significantVoltageChange;
         private int state; //0 no growth; 1 growth                  //shared
         private ConcurrentDictionary<int, InputAxon> synapses;      //shared
         private int type; //0 is proximal; 1 is basal; 2 is apical
@@ -36,7 +37,8 @@ namespace SynapseModel3
                         int numSynapsesToAddInGrowthEvent,
                         TimeSpan secondaryMessengerWindow,
                         int secondaryMessengerFrequencyTrigger,
-                        int numStartingSynapses) //tested
+                        int numStartingSynapses,
+                        int significantVoltageChange)
         {
             state = 0;
             membranePotential = RESTING_POTENTIAL;
@@ -51,6 +53,7 @@ namespace SynapseModel3
             this.restoreIncrement = restoreIncrement;
             this.numSynapsesToAddInGrowthEvent = numSynapsesToAddInGrowthEvent;
             messenger = new SecondaryMessenger(DateTime.Now, secondaryMessengerFrequencyTrigger, secondaryMessengerWindow);
+            this.significantVoltageChange = significantVoltageChange;
         }
 
 
@@ -156,15 +159,6 @@ namespace SynapseModel3
         public void AddToBuffer(Neurotransmitter nt)
         {
             buffer.Add(nt);
-
-            //??decide when to add events to SecondaryMessenger
-
-
-            //check whether dendrite growth state threshold reached
-            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
-            {
-                SetGrowthState();
-            }
         }
 
         public void DecayMembranePotential() //tested
@@ -209,8 +203,23 @@ namespace SynapseModel3
             Neurotransmitter removed = buffer.Take();
             int charge = removed.Charge;
 
+            int oldMembranePotential = membranePotential;
+
             //affect local membrane potential
-            Interlocked.Add(ref membranePotential, charge);
+            int currentMembranePotential = Interlocked.Add(ref membranePotential, charge);
+
+
+            //decide whether change was significant enough to add to SecondaryMessenger
+            if (Math.Abs(currentMembranePotential - oldMembranePotential) > significantVoltageChange)
+            {
+                messenger.AddEvent(DateTime.Now);
+
+                //check whether dendrite growth state threshold reached
+                if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
+                {
+                    SetGrowthState();
+                }
+            }
 
             return charge;
         }

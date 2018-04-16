@@ -1,8 +1,7 @@
 ﻿<Properties StartupConfiguration="{B0689A4B-DDC8-4653-8EC8-08F8E9A5C300}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="SynapseModel3/ProcessManager.cs">
     <Files>
-      <File FileName="SynapseModel3/ProcessManager.cs" Line="16" Column="39" />
-      <File FileName="SynapseModel3/SecondaryMessenger.cs" Line="37" Column="44" />
+      <File FileName="SynapseModel3/ProcessManager.cs" Line="54" Column="35" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />

@@ -26,6 +26,7 @@ namespace SynapseModel3
         private TimeSpan d_SecondaryMessengerWindow;
         private int d_SecondaryMessengerFrequencyTrigger;
         private int d_NumStartingSynapsesPerDendrite;
+        private int d_SignificantVoltageChange;
 
 
         //constructors
@@ -43,9 +44,10 @@ namespace SynapseModel3
                       TimeSpan dendriteSecondaryMessengerWindow,
                       int dendriteSecondaryMessengerFrequencyTrigger,
                       int numStartingSynapsesPerDendrite,
+                      int dendriteSignificantVoltageChange,
 
                       int numStartingDendrites,
-                      int[] startingDendriteTypesList) //tested
+                      int[] startingDendriteTypesList)
         {
             nextDendriteId = 0;
             state = 0;
@@ -64,6 +66,7 @@ namespace SynapseModel3
             this.d_SecondaryMessengerWindow = dendriteSecondaryMessengerWindow;
             this.d_SecondaryMessengerFrequencyTrigger = dendriteSecondaryMessengerFrequencyTrigger;
             this.d_NumStartingSynapsesPerDendrite = numStartingSynapsesPerDendrite;
+            this.d_SignificantVoltageChange = dendriteSignificantVoltageChange;
 
 
             //initialize dendrites
@@ -163,7 +166,7 @@ namespace SynapseModel3
 
 
         //private helper methods
-        private void AddDendrites(int numToAdd, int[] typesList) //tested
+        private void AddDendrites(int numToAdd, int[] typesList)
         {
             if (typesList.Length != numToAdd)
             {
@@ -180,7 +183,8 @@ namespace SynapseModel3
                                                d_NumSynapsesToAddInGrowthEvent,
                                                d_SecondaryMessengerWindow,
                                                d_SecondaryMessengerFrequencyTrigger,
-                                               d_NumStartingSynapsesPerDendrite);
+                                               d_NumStartingSynapsesPerDendrite,
+                                               d_SignificantVoltageChange);
 
                 dendrites.AddOrUpdate(newest.Id, newest, (key, oldValue) => oldValue);
             }
