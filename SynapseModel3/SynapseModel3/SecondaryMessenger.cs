@@ -62,7 +62,7 @@ namespace SynapseModel3
             }
 
             //store only the events to keep in the "events" collection
-            events = eventsToKeep;
+            events = eventsToKeep; //??atomic
 
             return triggered;
         }
