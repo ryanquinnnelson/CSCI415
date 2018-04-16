@@ -19,15 +19,15 @@ namespace SynapseModel3
         //fields
         private BlockingCollection<int> buffer; //shared
         private int decayFrequency;
-        private int membranePotential; //Volts
-        private ConcurrentBag<EventRecord> outputs;
+        private int membranePotential; //Volts //shared
+        private ConcurrentBag<EventRecord> outputs; //shared
         private int restoreIncrement;
         private DateTime start;
-        private int state; //0 is resting state, 1 is action potential
+        private int state; //0 is resting state, 1 is action potential //shared
 
 
         //constructors
-        public CellBody(DateTime start, int decayFrequency, int restoreIncrement)
+        public CellBody(DateTime start, int decayFrequency, int restoreIncrement) //tested
         {
             buffer = new BlockingCollection<int>(new ConcurrentQueue<int>());
             membranePotential = RESTING_POTENTIAL;
@@ -40,7 +40,7 @@ namespace SynapseModel3
 
 
         //properties
-        public int DecayFrequency
+        public int DecayFrequency //tested
         {
             get
             {
@@ -64,7 +64,7 @@ namespace SynapseModel3
             }
         }
 
-        public int RestoreIncrement
+        public int RestoreIncrement //tested
         {
             get
             {
@@ -99,7 +99,7 @@ namespace SynapseModel3
             buffer.Add(voltage);
         }
 
-        public void DecayMembranePotential()
+        public void DecayMembranePotential() //tested
         {
             if (state == 0 && membranePotential < RESTING_POTENTIAL)
             {
@@ -129,15 +129,17 @@ namespace SynapseModel3
                     list.Add(current);
                 }
             }
-            list.Sort(); //??untested line
+            list.Sort();
             return list;
         }
 
         public override string ToString() //tested
         {
-            return "CellBody{ start=" + start + ", state=" + state
-                + ", membranePotential=" + membranePotential + ", buffer="
-                + buffer + ", outputs=" + OutputsListToString() + " }";
+            return "CellBody{\n\tstart=" + start + ",\n\tstate=" + state
+                + ",\n\tmembranePotential=" + membranePotential + ",\n\tbuffer="
+                + buffer + ",\n\toutputs=" + OutputsListToString() 
+                + ",\n\trestoreIncrement=" + restoreIncrement
+                + ",\n\tdecayFrequency=" + decayFrequency + "\n}";
         }
 
         public int TryRemoveFromBuffer() //tested
@@ -188,24 +190,31 @@ namespace SynapseModel3
             return sb.ToString();
         }
 
-        private void PerformMembranePotentialSpike()
+        private void PerformMembranePotentialSpike() //tested
         {
             //Console.WriteLine("PerformMembranePotentialSpike()");
             int current;
             current = Interlocked.Exchange(ref membranePotential, DEPOLARIZATION_SPIKE);
             StoreAsOutput(DEPOLARIZATION_SPIKE);
+            Thread.Sleep(1);
 
             current = Interlocked.Exchange(ref membranePotential, HYPERPOLARIZATION_SPIKE);
             StoreAsOutput(HYPERPOLARIZATION_SPIKE);
             Thread.Sleep(ABSOLUTE_REFRACTORY_PERIOD); //absolute refractory period
         }
 
-        private void SetActionPotentialState()
+        private void RestoreToRestingPotential()
+        {
+            Interlocked.Exchange(ref membranePotential, RESTING_POTENTIAL);
+        }
+
+        private void SetActionPotentialState() //tested
         {
             //Console.WriteLine("SetActionPotentialState()");
             int original = Interlocked.CompareExchange(ref state, 1, 0);
             if (original == 0)
             {
+                //Console.WriteLine("state=" + state);
                 RaiseActionPotentialEvent(DateTime.Now); //raise event to alert neuron
             }
         }
@@ -225,7 +234,7 @@ namespace SynapseModel3
 
 
         //Action Potential event code
-        private void RaiseActionPotentialEvent(DateTime when)
+        public void RaiseActionPotentialEvent(DateTime when)
         {
             //event
             Console.WriteLine("Cell Body raises action potential event.");
@@ -235,8 +244,8 @@ namespace SynapseModel3
             //action within cell body
             PerformMembranePotentialSpike();
 
-            //restore to resting potential
-            Interlocked.Exchange(ref membranePotential, RESTING_POTENTIAL);
+            //restore to resting state
+            RestoreToRestingPotential();
             SetRestingPotentialState();
         }
 
@@ -263,6 +272,14 @@ namespace SynapseModel3
 
         //    Console.WriteLine("Test of GetMembranePotential()");
         //    Console.WriteLine(c.MembranePotential);
+        //    Console.WriteLine();
+
+        //    Console.WriteLine("Test of GetDecayFrequency()");
+        //    Console.WriteLine(c.DecayFrequency);
+        //    Console.WriteLine();
+
+        //    Console.WriteLine("Test of GetRestoreIncrement()");
+        //    Console.WriteLine(c.RestoreIncrement);
         //    Console.WriteLine();
 
         //    Console.WriteLine("Test of GetState()");

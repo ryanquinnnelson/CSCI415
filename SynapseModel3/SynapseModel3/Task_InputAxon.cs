@@ -10,30 +10,36 @@ namespace SynapseModel3
         private Dendrite dendrite;
         private int id;
         private TimeSpan runLength;
+        private int neurotransmitterMagnitude;
 
         //constructors
-        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, Dendrite dendrite) //tested
+        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, int magnitude, Dendrite dendrite) //tested
         {
             Console.WriteLine("Task_AxonInput " + id + " is created.");
             this.id = id;
             this.runLength = runLength;
-            this.dendrite = dendrite;
+            bool success = dendrite.TryConnect(axon);
             this.axon = axon;
+            this.neurotransmitterMagnitude = magnitude;
+
+            if (success)
+            {
+                this.dendrite = dendrite;
+            }
         }
 
-        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon) //tested
+        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, int magnitude) //tested
         {
             Console.WriteLine("Task_AxonInput " + id + " is created.");
             this.id = id;
             this.runLength = runLength;
             this.dendrite = null;
             this.axon = axon;
+            this.neurotransmitterMagnitude = magnitude;
         }
 
 
         //properties
-
-
         public InputAxon Axon //tested
         {
             get
@@ -52,12 +58,9 @@ namespace SynapseModel3
             {
                 return this.dendrite;
             }
-            set
+            private set
             {
-                if (dendrite == null)
-                {
-                    dendrite = value;
-                }
+                dendrite = value;
             }
         }
 
@@ -75,26 +78,33 @@ namespace SynapseModel3
 
 
         //public methods
-        public void ConnectAndProduce()
+        public void ConnectAndProduce(Neuron neuron) //tested
         {
-            //find an open synapse if possible, otherwise terminate
-            //??to be implemented
+            //find an open synapse
+            Dendrite result = neuron.SearchForOpenSynapse(axon);
+
+            if (result != null)
+            {
+                Console.WriteLine("InputAxon " + id + " found dendrite " + result);
+                this.dendrite = result;
+                Produce();
+            }
         }
 
         public void Produce() //tested
         {
             if (dendrite == null)
             {
-                Console.WriteLine("Dendrite was NULL.");
+                Console.WriteLine("Dendrite is NULL.");
                 return; //nothing to produce to
             }
 
-            DateTime start = DateTime.Now; //??maybe this needs to be passed to object
+            DateTime start = DateTime.Now;
             Console.WriteLine("Task_InputAxon {0} is producing...", Id);
             while (DateTime.Now - start < runLength)
             {
                 Thread.Sleep(axon.ProductionFrequency);
-                Neurotransmitter newest = new Neurotransmitter(50);
+                Neurotransmitter newest = new Neurotransmitter(neurotransmitterMagnitude);
                 dendrite.AddToBuffer(newest);
 
                 //Console.WriteLine("Task_InputAxon {0} added {1} to dendrite {2} buffer.", Id, newest.Charge, dendrite.Id);
@@ -114,28 +124,44 @@ namespace SynapseModel3
         ////tests
         //public static void Main()
         //{
+        //    Neuron neuron = new Neuron(10,                          //*cell body decay frequency
+        //                               50,                          //*cell body restore increment
+        //                               new TimeSpan(0,0,2),         //*neuron secondary messenger window
+        //                               100,                         //*neuron secondary messenger frequency trigger
+        //                               1,                           //*number of dendrites to add in growth event
+        //                               new int[] { 0 },             //*types of dendrites to add in growth event
+        //                               10,                          //*dendrite decay frequency
+        //                               100,                         //*dendrite production frequency
+        //                               96,                          //*dendrite restore increment
+        //                               1,                           //*number of synapses to add in growth event
+        //                               new TimeSpan(0,0,2),         //*dendrite secondary messenger window
+        //                               100,                         //*dendrite secondary messenger frequency trigger
+        //                               2,                           //*number of starting synapses per dendrite
+        //                               1,                           //*number of starting dendrites
+        //                               new int[] { 0 });            //*types of dendrites to start
+            
+        //    Dendrite dendrite = new Dendrite(1, 1, 100, 100, 50, 1, new TimeSpan(0, 0, 2), 100, 1);
+
         //    Console.WriteLine("Test for Constructor 1");
-        //    Task_InputAxon tia = new Task_InputAxon(1, new TimeSpan(0, 0, 2), new InputAxon(1, 100, 1));
+        //    Task_InputAxon tia = new Task_InputAxon(1, new TimeSpan(0, 0, 2), new InputAxon(1, 100, 1), 10);
         //    Console.WriteLine(tia);
         //    Console.WriteLine();
 
         //    Console.WriteLine("Test for Constructor 2");
-        //    Task_InputAxon tia2 = new Task_InputAxon(1, new TimeSpan(0, 0, 2), new InputAxon(1, 100, 1), new Dendrite(1,1,3));
+        //    Task_InputAxon tia2 = new Task_InputAxon(1, new TimeSpan(0, 0, 2), new InputAxon(1, 100, 1), 10, dendrite);
         //    Console.WriteLine(tia2);
         //    Console.WriteLine();
 
-        //    Console.WriteLine("Test for SetDendrite()");
-        //    Dendrite d = new Dendrite(0, 0, 5);
-        //    Synapse s = d.GetOpenSynapse();
-        //    d.FormSynapseConnection(s, tia.axon);
-        //    tia.Dendrite = d;
-        //    Console.WriteLine(tia);
-        //    Console.WriteLine();
-
-
-        //    Console.WriteLine("Test for Produce()");
+        //    Console.WriteLine("Test for Produce() fail");
         //    tia.Produce();
         //    Console.WriteLine();
+
+        //    Console.WriteLine("Test for Produce() succeed");
+        //    tia2.Produce();
+        //    Console.WriteLine();
+
+        //    Console.WriteLine("Test for ConnectAndProduce()");
+        //    tia.ConnectAndProduce(neuron);
         //}
 
     }

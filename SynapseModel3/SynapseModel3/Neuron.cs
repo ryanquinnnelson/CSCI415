@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Text;
 using System.Threading;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace SynapseModel3
 {
     public class Neuron
     {
         //fields
-        private CellBody body;
-        private List<Dendrite> dendrites;
+        private CellBody body;                                  //shared
+        private ConcurrentDictionary<int, Dendrite> dendrites;  //shared
         private int[] growthEventDendriteTypesList;
-        private SecondaryMessenger messenger;
+        private SecondaryMessenger messenger;                   //shared
         private int nextDendriteId;
         private int numDendritesToAddInGrowthEvent;
-        private int state; //0 for no growth; 1 for growth
+        private int state; //0 for no growth; 1 for growth      //shared
 
 
         //for each dendrite to be added
@@ -45,11 +45,11 @@ namespace SynapseModel3
                       int numStartingSynapsesPerDendrite,
 
                       int numStartingDendrites,
-                      int[] startingDendriteTypesList)
+                      int[] startingDendriteTypesList) //tested
         {
             nextDendriteId = 0;
             state = 0;
-            dendrites = new List<Dendrite>();
+            dendrites = new ConcurrentDictionary<int, Dendrite>();
 
             body = new CellBody(DateTime.Now, cellBodyDecayFrequency, cellBodyRestoreIncrement);
             messenger = new SecondaryMessenger(DateTime.Now, neuronFrequencyTrigger, neuronSecondaryMessengerWindow);
@@ -67,16 +67,7 @@ namespace SynapseModel3
 
 
             //initialize dendrites
-            AddDendrites(numStartingDendrites,
-                         startingDendriteTypesList,
-
-                         d_DecayFrequency,
-                         d_ProductionFrequency,
-                         d_RestoreIncrement,
-                         d_NumSynapsesToAddInGrowthEvent,
-                        d_SecondaryMessengerWindow,
-                        d_SecondaryMessengerFrequencyTrigger,
-                        d_NumStartingSynapsesPerDendrite);
+            AddDendrites(numStartingDendrites, startingDendriteTypesList);
 
             //add listener for ActionPotential event
             body.ActionPotentialEvent += ReceiveActionPotentialEvent;
@@ -84,7 +75,7 @@ namespace SynapseModel3
 
 
         //properties
-        public CellBody Body
+        public CellBody Body //tested
         {
             get
             {
@@ -96,19 +87,19 @@ namespace SynapseModel3
             }
         }
 
-        public List<Dendrite> Dendrites
+        public ICollection<Dendrite> Dendrites
         {
             get
             {
-                return this.dendrites;
+                return this.dendrites.Values;
             }
             private set
             {
-                dendrites = value;
+                dendrites = (ConcurrentDictionary<int, Dendrite>)value;
             }
         }
 
-        public int State
+        public int State //tested
         {
             get
             {
@@ -122,75 +113,57 @@ namespace SynapseModel3
 
 
         //public methods
-        public string DendritesListToString() //tested
+        public Dendrite GetDendrite(int id) //tested
         {
-            StringBuilder sb = new StringBuilder("[");
-            foreach (Dendrite d in dendrites)
-            {
-                sb.Append(d.Id);
-                sb.Append(",");
-            }
-            if (dendrites.Count > 0)
-            {
-                sb.Remove(sb.Length - 1, 1);
-            }
-
-            sb.Append("]");
-            return sb.ToString();
+            Dendrite result = dendrites.GetOrAdd(id, (key) => null);
+            return result;
         }
 
-        public Dendrite GetDendrite(int id)
+        public Dendrite SearchForOpenSynapse(InputAxon axon) //tested
         {
+            Dendrite dendrite = null;
 
-            Dendrite target = null;
-
-            foreach (Dendrite d in dendrites)
+            foreach (Dendrite current in dendrites.Values)
             {
-                if (d.Id == id)
+                bool success = current.TryConnect(axon);
+                if (success)
                 {
-                    target = d;
-                    break;
+                    Console.WriteLine("Neuron found open synapse on dendrite.");
+                    dendrite = current;
+                    break; //stop searching
                 }
             }
 
-            return target;
-        }
-
-        public Synapse SearchForOpenSynapse(int dendriteType) //tested
-        {
-            Synapse openSynapse = null;
-
-            foreach (Dendrite d in dendrites)
-            {
-                if (d.Type == dendriteType && d.NumAvailableSynapses > 0)
-                {
-                    openSynapse = d.GetOpenSynapse();
-                }
-            }
-
-            return openSynapse;
+            return dendrite;
         }
 
         public override string ToString() //tested
         {
-            return "Neuron{ nextDendriteId=" + nextDendriteId + ", state="
-                + state + ", body=" + body + ", dendrites="
-                + DendritesListToString() + ", messenger=" + messenger + " }";
+            return "Neuron{\n\tnextDendriteId=" + nextDendriteId + ",\n\tstate="
+                + state + ",\n\tbody=" + body + ",\n\tdendrites="
+                + DendritesListToString() + ",\n\tmessenger=" + messenger
+                + ",\n\tnumDendritesToAddInGrowthEvent="
+                + numDendritesToAddInGrowthEvent 
+                + ",\n\tgrowthEventDendriteTypesList=" 
+                + GrowthEventDendriteTypesListToString() 
+                + ",\n\n\td_DecayFrequency=" + d_DecayFrequency
+                + ",\n\td_ProductionFrequency=" + d_ProductionFrequency 
+                + ",\n\td_RestoreIncrement=" + d_RestoreIncrement
+                + ",\n\td_NumSynapsesToAddInGrowthEvent="
+                + d_NumSynapsesToAddInGrowthEvent 
+                + ",\n\td_SecondaryMessengerWindow="
+                + d_SecondaryMessengerWindow 
+                + ",\n\td_SecondaryMessengerFrequencyTrigger=" 
+                + d_SecondaryMessengerFrequencyTrigger
+                + ",\n\td_NumStartingSynapsesPerDendrite=" 
+                + d_NumStartingSynapsesPerDendrite +"\n}";
         }
 
 
 
 
         //private helper methods
-        private void AddDendrites(int numToAdd,
-                                  int[] typesList,
-                                  int decayFrequency,
-                                  int productionFrequency,
-                                  int restoreIncrement,
-                                  int numSynapsesToAddInGrowthEvent,
-                                  TimeSpan window,
-                                  int frequencyTrigger,
-                                  int numStartingSynapses)
+        private void AddDendrites(int numToAdd, int[] typesList) //tested
         {
             if (typesList.Length != numToAdd)
             {
@@ -201,24 +174,78 @@ namespace SynapseModel3
             {
                 Dendrite newest = new Dendrite(nextDendriteId++,
                                                typesList[i],
-                                               decayFrequency,
-                                               productionFrequency,
-                                               restoreIncrement,
-                                               numSynapsesToAddInGrowthEvent,
-                                               window,
-                                               frequencyTrigger,
-                                               numStartingSynapses);
-                dendrites.Add(newest);
+                                               d_DecayFrequency,
+                                               d_ProductionFrequency,
+                                               d_RestoreIncrement,
+                                               d_NumSynapsesToAddInGrowthEvent,
+                                               d_SecondaryMessengerWindow,
+                                               d_SecondaryMessengerFrequencyTrigger,
+                                               d_NumStartingSynapsesPerDendrite);
+
+                dendrites.AddOrUpdate(newest.Id, newest, (key, oldValue) => oldValue);
             }
         }
 
-        private void CheckCellGrowthEventThreshold()
+        private void CheckCellGrowthEventThreshold() //tested
         {
             if (messenger.IsGrowthStateTriggered(DateTime.Now))
             {
-                Interlocked.CompareExchange(ref state, 1, 0);
-                RaiseCellGrowthEvent(DateTime.Now); //send event to ProcessManager
+                SetGrowthState();
             }
+        }
+
+        private string DendritesListToString() //tested
+        {
+            StringBuilder sb = new StringBuilder("[");
+            foreach (Dendrite d in dendrites.Values)
+            {
+                if(d != null)
+                {
+                    sb.Append(d.Id);
+                    sb.Append(",");
+                }
+            }
+            if (dendrites.Count > 0)
+            {
+                sb.Remove(sb.Length - 1, 1);
+            }
+
+            sb.Append("]");
+            return sb.ToString();
+        }
+
+        private string GrowthEventDendriteTypesListToString() //tested
+        {
+            StringBuilder sb = new StringBuilder("[");
+
+            for (int i = 0; i < growthEventDendriteTypesList.Length; i++)
+            {
+                sb.Append(growthEventDendriteTypesList[i]);
+                sb.Append(",");
+            }
+            if (growthEventDendriteTypesList.Length > 0)
+            {
+                sb.Remove(sb.Length - 1, 1);
+            }
+
+            sb.Append("]");
+
+
+            return sb.ToString();
+        }
+
+        private void SetGrowthState() //tested
+        {
+            int original = Interlocked.CompareExchange(ref state, 1, 0);
+            if (original == 0)
+            {
+                RaiseCellGrowthEvent(DateTime.Now); //raise event to ProcessManager
+            }
+        }
+
+        private void SetNoGrowthState() //tested
+        {
+            Interlocked.CompareExchange(ref state, 0, 1);
         }
 
 
@@ -238,21 +265,13 @@ namespace SynapseModel3
 
 
         //CellGrowthEvent code
-        public void RaiseCellGrowthEvent(DateTime when)
+        public void RaiseCellGrowthEvent(DateTime when) //tested
         {
             //action within the cell
-            AddDendrites(numDendritesToAddInGrowthEvent,
-                         growthEventDendriteTypesList,
-                         d_DecayFrequency,
-                         d_ProductionFrequency,
-                         d_RestoreIncrement,
-                         d_NumSynapsesToAddInGrowthEvent,
-                         d_SecondaryMessengerWindow,
-                         d_SecondaryMessengerFrequencyTrigger,
-                         d_NumStartingSynapsesPerDendrite);
+            AddDendrites(numDendritesToAddInGrowthEvent, growthEventDendriteTypesList);
 
             //reset neuron state
-            Interlocked.CompareExchange(ref state, 0, 1);
+            SetGrowthState();
 
             //event
             Console.WriteLine("Neuron raises cell growth event.");
@@ -276,12 +295,16 @@ namespace SynapseModel3
         //public static void Main()
         //{
             //Console.WriteLine("Test of Constructor 1");
-            //Neuron n = new Neuron(100,50,new TimeSpan(0,0,2), 100, 1, new int[]{0}, 100, 100, 50, 1, new TimeSpan(0,0,2), 100, 1, 1, new int []{0});
+            //Neuron n = new Neuron(100, 50, new TimeSpan(0, 0, 2), 1, 1, new int[] { 0 }, 100, 100, 50, 1, new TimeSpan(0, 0, 2), 100, 1, 2, new int[] { 0,1 });
             //Console.WriteLine(n);
             //Console.WriteLine();
 
-            //Console.WriteLine("Test of GetDendrite()");
+            //Console.WriteLine("Test of GetDendrite() success");
             //Console.WriteLine(n.GetDendrite(0));
+            //Console.WriteLine();
+
+            //Console.WriteLine("Test of GetDendrite() failure");
+            //Console.WriteLine(n.GetDendrite(3));
             //Console.WriteLine();
 
             //Console.WriteLine("Test of GetBody()");
@@ -292,14 +315,19 @@ namespace SynapseModel3
             //Console.WriteLine(n.State);
             //Console.WriteLine();
 
-            //Console.WriteLine("Test of GetDendrites()");
-            //Console.WriteLine(n.Dendrites);
+            //Console.WriteLine("Test of SearchForOpenSynapse() with synapse available");
+            //InputAxon axon1 = new InputAxon(1, 100, 0);
+            //Console.WriteLine(n.SearchForOpenSynapse(axon1));
+            //Console.WriteLine();
+
+            //Console.WriteLine("Test of SearchForOpenSynapse() with no synapse available");
+            //Console.WriteLine(n.SearchForOpenSynapse(axon1));
             //Console.WriteLine();
 
             //Console.WriteLine("Test of AddDendrite() with incorrect number in list");
             //try
             //{
-            //    n.AddDendrites(1, new int[] { 1, 1 }, 100, 100, 50, 1, new TimeSpan(0,0,2), 100, 1);
+            //    n.AddDendrites(1, new int[] { 1, 1 });
             //}
             //catch (ArgumentException ae)
             //{
@@ -308,17 +336,11 @@ namespace SynapseModel3
             //Console.WriteLine();
 
             //Console.WriteLine("Test of AddDendrite() with correct number in list");
-            //n.AddDendrites(2, new int[] { 1, 1 }, 100, 100, 50, 1, new TimeSpan(0, 0, 2), 100, 1);
+            //n.AddDendrites(2, new int[] { 1, 1 });
             //Console.WriteLine(n.DendritesListToString());
             //Console.WriteLine();
 
-            //Console.WriteLine("Test of SearchForOpenSynapse() with synapse available");
-            //Console.WriteLine(n.SearchForOpenSynapse(0));
-            //Console.WriteLine();
 
-            //Console.WriteLine("Test of SearchForOpenSynapse() with no synapse available");
-            //Console.WriteLine(n.SearchForOpenSynapse(2));
-            //Console.WriteLine();
 
             //Console.WriteLine("Test of CheckGrowthEventThreshold() threshold not met");
             //n.CheckCellGrowthEventThreshold();
@@ -328,6 +350,7 @@ namespace SynapseModel3
             //n.messenger = new SecondaryMessenger(DateTime.Now, 1, new TimeSpan(0, 0, 5));
             ////n.Body.RaiseActionPotentialEvent(DateTime.Now); //make public to test
             //n.CheckCellGrowthEventThreshold();
+            //Console.WriteLine(n);
             //Console.WriteLine();
         //}
     }
