@@ -1,19 +1,14 @@
 18_0405 To Do List code
 
-12. design logic of key methods in ProcessManager class
-2. Finish implementing Process Manager methods for adding more processes due to events
+
 3. Find a way to add new Tasks to the WaitAll() method
 4. Solve blocking issue with consumers
 5. Find good ratios of frequencies, charge, number of tasks to produce realistic behavior
 7. Add randomness to inhibitory, excitatory inputs
 8. Add graphing capability
 14. Setup number of dendrite, input axon, cell body tasks to dynamically depend on configuration settings for neuron
-
-
-
-
-
-
-13. revise secondary messenger to use concurrent collection
-1. Make secondary messenger work concurrently with iteration and addition
 15. add a way to turn on and off whether the secondary messenger is involved (for experiments)
+
+
+12. design logic of key methods in ProcessManager class
+2. Finish implementing Process Manager methods for adding more processes due to events
