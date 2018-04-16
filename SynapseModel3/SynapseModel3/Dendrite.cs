@@ -158,13 +158,11 @@ namespace SynapseModel3
             buffer.Add(nt);
 
             //??decide when to add events to SecondaryMessenger
-
-
-            //check whether dendrite growth state threshold reached
-            if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
-            {
-                SetGrowthState();
-            }
+            ////check whether dendrite growth state threshold reached
+            //if (state == 0 && messenger.IsGrowthStateTriggered(DateTime.Now))
+            //{
+            //    SetGrowthState();
+            //}
         }
 
         public void DecayMembranePotential() //tested

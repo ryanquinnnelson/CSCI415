@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace SynapseModel3
 {
     public class SecondaryMessenger
     {
         //fields
-        private List<DateTime> events;
+        private ConcurrentBag<DateTime> events;
         private int frequencyTrigger;
         private DateTime start;
         private TimeSpan window;
@@ -19,49 +20,51 @@ namespace SynapseModel3
             this.frequencyTrigger = frequencyTrigger;
             this.window = window;
             this.start = start;
-            this.events = new List<DateTime>();
+            this.events = new ConcurrentBag<DateTime>();
         }
 
 
         //public methods
-        public void AddEvent(DateTime dt) //needs fixing so it can work concurrently
+        public void AddEvent(DateTime dt)
         {
             events.Add(dt);
         }
 
-        public bool IsGrowthStateTriggered(DateTime now) //temporary??
+        public bool IsGrowthStateTriggered2(DateTime now) //temporary??
         { 
             return false;
         }
 
-        public bool IsGrowthStateTriggered2(DateTime now) //needs fixing so it can be read from and written to concurrently??
+        //may need locking
+        public bool IsGrowthStateTriggered(DateTime now) //tested
         {
+            bool triggered = false;
+
             //determine current observation window
             DateTime oldest = now - window;
 
-            //process list to remove events that are older than current observation window
-            List<DateTime> temp = new List<DateTime>();
-            foreach (DateTime e in events)
+            //process bag to remove events that are older than current observation window
+            DateTime[] eventsArray = events.ToArray(); //copy current events slice
+            ConcurrentBag<DateTime> eventsToKeep = new ConcurrentBag<DateTime>();
+
+            foreach (DateTime e in eventsArray)
             {
                 if (e >= oldest)
                 {
-                    temp.Add(e); //this event occurred within the observation window
+                    eventsToKeep.Add(e); //this event occurred within the observation window
                 }
             }
 
-            events.Clear(); //remove old events from list
-            events = temp; //store only events that occurred within the observation window
-
-
             //determine whether enough events have occurred in this window to trigger a growth event
-            if (events.Count >= frequencyTrigger)
+            if (eventsToKeep.Count >= frequencyTrigger)
             {
-                return true;
+                triggered = true;
             }
-            else
-            {
-                return false;
-            }
+
+            //store only the events to keep in the "events" collection
+            events = eventsToKeep;
+
+            return triggered;
         }
 
         public override string ToString() //tested
@@ -75,7 +78,7 @@ namespace SynapseModel3
         private string OutputEventsList() //tested
         {
             StringBuilder sb = new StringBuilder("[");
-            foreach (DateTime dt in events)
+            foreach (DateTime dt in events.ToArray())
             {
                 sb.Append(dt);
                 sb.Append(",");
@@ -96,13 +99,18 @@ namespace SynapseModel3
         //    Console.WriteLine("Test of Constructor 1");
         //    SecondaryMessenger m = new SecondaryMessenger(DateTime.Now, 1, new TimeSpan(0, 0, 5));
         //    Console.WriteLine(m);
+        //    Console.WriteLine();
+
         //    Console.WriteLine("Test of AddEvent()");
         //    m.AddEvent(DateTime.Now);
         //    m.AddEvent(new DateTime(2017, 12, 1));
         //    Console.WriteLine(m.OutputEventsList());
+        //    Console.WriteLine();
+
         //    Console.WriteLine("Test of IsGrowthStateTriggered()");
-        //    Console.WriteLine(m.IsGrowthStateTriggered(DateTime.Now));
+        //    Console.WriteLine(m.IsGrowthStateTriggered2(DateTime.Now));
         //    Console.WriteLine(m.OutputEventsList());
+        //    Console.WriteLine();
         //}
 
 
