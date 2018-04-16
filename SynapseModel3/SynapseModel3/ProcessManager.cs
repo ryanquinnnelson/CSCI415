@@ -49,8 +49,9 @@ namespace SynapseModel3
                                 50,             //*dendrite restore increment
                                 1,              //*number of synapses to add in growth event
                                 window,         //*dendrite secondary messenger window
-                                100,            //*dendrite secondary messenger frequency trigger
+                                2,              //*dendrite secondary messenger frequency trigger
                                 2,              //*number of starting synapses per dendrite
+                                50,            //*dendrite significant voltage change amount
                                 1,              //*number of starting dendrites
                                 new int[]{0});  //*types of dendrites to start
             
