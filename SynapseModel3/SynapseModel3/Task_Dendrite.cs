@@ -13,7 +13,7 @@ namespace SynapseModel3
 
 
         //constructors
-        public Task_Dendrite(int id, TimeSpan runLength, Dendrite dendrite, CellBody body)
+        public Task_Dendrite(int id, TimeSpan runLength, Dendrite dendrite, CellBody body) //tested
         {
             Console.WriteLine("Task_Dendrite " + id + " is created.");
 
@@ -25,7 +25,7 @@ namespace SynapseModel3
 
 
         //properties
-        public CellBody Body
+        public CellBody Body //tested
         {
             get
             {
@@ -37,7 +37,7 @@ namespace SynapseModel3
             }
         }
 
-        public Dendrite Dendrite
+        public Dendrite Dendrite //tested
         {
             get
             {
@@ -49,7 +49,7 @@ namespace SynapseModel3
             }
         }
 
-        public int Id
+        public int Id //tested
         {
             get
             {
@@ -63,7 +63,7 @@ namespace SynapseModel3
 
 
         //public methods
-        public void Consume()
+        public void Consume() //tested
         {
             DateTime start = DateTime.Now;
             Console.WriteLine("Task_Dendrite {0} is consuming...", Id);
@@ -76,7 +76,7 @@ namespace SynapseModel3
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }
 
-        public void Decay()
+        public void Decay() //tested
         {
             DateTime start = DateTime.Now;
             Console.WriteLine("Task_Dendrite {0} is decaying...", Id);
@@ -89,7 +89,7 @@ namespace SynapseModel3
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }
 
-        public void Produce()
+        public void Produce() //tested
         {
             DateTime start = DateTime.Now;
             Console.WriteLine("Task_Dendrite {0} is producing...", Id);
@@ -105,7 +105,7 @@ namespace SynapseModel3
             Console.WriteLine("Task_Dendrite {0} is done.", Id);
         }
 
-        public override String ToString()
+        public override String ToString() //tested
         {
             return "Task_Dendrite{ id=" + Id + " }";
         }
@@ -115,9 +115,10 @@ namespace SynapseModel3
         //public static void Main()
         //{
         //    Console.WriteLine("Test for Constructor 1");
-        //    Task_Dendrite td = new Task_Dendrite(1, new TimeSpan(0, 0, 2),
-        //                                         new Dendrite(0, 0, 5, 100, 100),
-        //                                         new CellBody(DateTime.Now, 100));
+        //    Task_Dendrite td = new Task_Dendrite(1, 
+        //                                         new TimeSpan(0, 0, 2),
+        //                                         new Dendrite(1,1,100,100,50,1,new TimeSpan(0,0,2),100,1),
+        //                                         new CellBody(DateTime.Now,100,50));
 
         //    Console.WriteLine(td);
         //    Console.WriteLine();

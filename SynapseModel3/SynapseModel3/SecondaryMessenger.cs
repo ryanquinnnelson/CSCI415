@@ -26,7 +26,7 @@ namespace SynapseModel3
         //public methods
         public void AddEvent(DateTime dt) //needs fixing so it can work concurrently
         {
-            //events.Add(dt);
+            events.Add(dt);
         }
 
         public bool IsGrowthStateTriggered(DateTime now) //temporary??

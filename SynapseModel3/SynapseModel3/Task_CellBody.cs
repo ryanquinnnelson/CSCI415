@@ -23,7 +23,7 @@ namespace SynapseModel3
 
 
         //properties
-        public CellBody Body
+        public CellBody Body //tested
         {
             get
             {
@@ -36,7 +36,7 @@ namespace SynapseModel3
             }
         }
 
-        public int Id
+        public int Id //tested
         {
             get
             {
@@ -52,7 +52,7 @@ namespace SynapseModel3
 
 
         //public methods
-        public void Consume()
+        public void Consume() //tested
         {
             DateTime start = DateTime.Now;
             Console.WriteLine("Task_CellBody {0} is consuming...", Id);

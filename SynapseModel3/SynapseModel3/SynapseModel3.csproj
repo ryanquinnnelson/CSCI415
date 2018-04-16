@@ -42,7 +42,6 @@
     <Compile Include="Neuron.cs" />
     <Compile Include="Neurotransmitter.cs" />
     <Compile Include="SecondaryMessenger.cs" />
-    <Compile Include="Synapse.cs" />
     <Compile Include="Dendrite.cs" />
     <Compile Include="Task_Dendrite.cs" />
     <Compile Include="ProcessManager.cs" />
