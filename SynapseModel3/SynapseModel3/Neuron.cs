@@ -166,8 +166,10 @@ namespace SynapseModel3
 
 
         //private helper methods
-        private void AddDendrites(int numToAdd, int[] typesList)
+        private List<Dendrite> AddDendrites(int numToAdd, int[] typesList)
         {
+            List<Dendrite> added = new List<Dendrite>(numToAdd);
+
             if (typesList.Length != numToAdd)
             {
                 throw new ArgumentException("Number of dendrites to be created doesn't match number of elements in type list.");
@@ -187,7 +189,9 @@ namespace SynapseModel3
                                                d_SignificantVoltageChange);
 
                 dendrites.AddOrUpdate(newest.Id, newest, (key, oldValue) => oldValue);
+                added.Add(newest);
             }
+            return added;
         }
 
         private void CheckCellGrowthEventThreshold() //tested
@@ -272,14 +276,14 @@ namespace SynapseModel3
         public void RaiseCellGrowthEvent(DateTime when) //tested
         {
             //action within the cell
-            AddDendrites(numDendritesToAddInGrowthEvent, growthEventDendriteTypesList);
+            List<Dendrite> added = AddDendrites(numDendritesToAddInGrowthEvent, growthEventDendriteTypesList);
 
             //reset neuron state
-            SetGrowthState();
+            SetNoGrowthState();
 
             //event
             Console.WriteLine("Neuron raises cell growth event.");
-            EventArgs_CellGrowth args = new EventArgs_CellGrowth(when);
+            EventArgs_CellGrowth args = new EventArgs_CellGrowth(when, added);
             OnCellGrowthEvent(args);
         }
 

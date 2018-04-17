@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace SynapseModel3
 {
     public class EventArgs_CellGrowth : EventArgs
     {
         //fields
         private DateTime when;
+        private List<Dendrite> dendritesAdded;
 
 
         //constructors
-        public EventArgs_CellGrowth(DateTime when) //tested
+        public EventArgs_CellGrowth(DateTime when, List<Dendrite> added) //tested
         {
             this.when = when;
+            this.dendritesAdded = added;
         }
 
 
@@ -24,6 +28,18 @@ namespace SynapseModel3
             set
             {
                 when = value;
+            }
+        }
+
+        public List<Dendrite> DendritesAdded //tested
+        {
+            get
+            {
+                return this.dendritesAdded;
+            }
+            set
+            {
+                dendritesAdded = value;
             }
         }
 
