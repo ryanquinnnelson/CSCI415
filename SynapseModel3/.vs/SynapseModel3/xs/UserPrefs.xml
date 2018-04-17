@@ -2,7 +2,10 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="SynapseModel3/ProcessManager.cs">
     <Files>
       <File FileName="SynapseModel3/SecondaryMessenger.cs" Line="33" Column="96" />
-      <File FileName="SynapseModel3/ProcessManager.cs" Line="18" Column="9" />
+      <File FileName="SynapseModel3/Neuron.cs" Line="197" Column="51" />
+      <File FileName="SynapseModel3/CellBody.cs" Line="24" Column="38" />
+      <File FileName="SynapseModel3/Dendrite.cs" Line="5" Column="24" />
+      <File FileName="SynapseModel3/ProcessManager.cs" Line="16" Column="48" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />

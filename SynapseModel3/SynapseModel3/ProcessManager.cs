@@ -46,7 +46,7 @@ namespace SynapseModel3
                                 window,         //*neuron secondary messenger window
                                 200,              //*neuron secondary messenger frequency trigger
                                 1,              //*number of dendrites to add in growth event
-                                new int[]{0},   //*types of dendrites to add in growth event
+                                new int[] { 0 },   //*types of dendrites to add in growth event
                                 10,             //*dendrite decay frequency
                                 100,            //*dendrite production frequency
                                 50,             //*dendrite restore increment
@@ -56,8 +56,8 @@ namespace SynapseModel3
                                 2,              //*number of starting synapses per dendrite
                                 30,              //*dendrite significant voltage change amount //at 25, too frequent; at 26, no occurrence
                                 1,              //*number of starting dendrites
-                                new int[]{0});  //*types of dendrites to start
-            
+                                new int[] { 0 });  //*types of dendrites to start
+
             tasks = new List<Task>();
             runLength = new TimeSpan(0, 0, 10);
             start = DateTime.Now;
@@ -69,7 +69,8 @@ namespace SynapseModel3
             neuron.CellGrowthEvent += RespondToCellGrowthEvent;
 
             //listen for DendriteGrowthEvent from each Dendrite
-            foreach(Dendrite d in neuron.Dendrites){
+            foreach (Dendrite d in neuron.Dendrites)
+            {
                 d.DendriteGrowthEvent += RespondToDendriteGrowthEvent;
             }
 
@@ -170,7 +171,8 @@ namespace SynapseModel3
 
 
         //static methods
-        private static void OutputResults(){
+        private static void OutputResults()
+        {
             Console.WriteLine();
             foreach (EventRecord r in neuron.Body.GetOutputsAsList())
             {
@@ -180,7 +182,7 @@ namespace SynapseModel3
 
         private static void RespondToCellGrowthEvent(object sender, EventArgs_CellGrowth e)
         {
-            
+
             Console.WriteLine("ProcessManager received cell growth event.");
             List<Dendrite> added = e.DendritesAdded;
 
@@ -245,7 +247,8 @@ namespace SynapseModel3
 
         }
 
-        private static void RespondToDendriteGrowthEvent(object sender, EventArgs_DendriteGrowth eventArgs){
+        private static void RespondToDendriteGrowthEvent(object sender, EventArgs_DendriteGrowth eventArgs)
+        {
             //to be implemented
             Console.WriteLine("ProcessManager received dendrite growth event.");
         }
