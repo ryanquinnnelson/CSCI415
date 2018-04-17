@@ -247,10 +247,28 @@ namespace SynapseModel3
 
         }
 
-        private static void RespondToDendriteGrowthEvent(object sender, EventArgs_DendriteGrowth eventArgs)
+        private static void RespondToDendriteGrowthEvent(object sender, EventArgs_DendriteGrowth e)
         {
-            //to be implemented
+            
             Console.WriteLine("ProcessManager received dendrite growth event.");
+            //Dendrite dendrite = neuron.GetDendrite(e.DendriteId);
+
+            //add Tasks to produce to dendrites added
+            //====================================================================//
+            //                               input                                //
+            //====================================================================//
+            //Producers to send neurotransmitters to dendrites
+            for (int i = 0; i < NUM_INPUTAXON_PRODUCERS; i++)
+            {
+                Task newest = Task.Factory.StartNew((val) =>
+                {
+                    int id = (int)val;
+                    InputAxon axon = new InputAxon(nextInputAxonId++, INPUTAXON_PRODUCTION_FREQUENCY, 0);
+                    inputs.Add(axon);
+                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE).ConnectAndProduce(neuron);
+                }, nextInputAxonTaskId++);
+                tasks.Add(newest);
+            }
         }
     }
 }
