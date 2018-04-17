@@ -30,10 +30,10 @@ namespace SynapseModel3
             events.Add(dt);
         }
 
-        //public bool IsGrowthStateTriggered2(DateTime now) //temporary??
-        //{ 
-        //    return false;
-        //}
+        public bool IsGrowthStateTriggered2(DateTime now) //use to turn off secondary messenger
+        { 
+            return false;
+        }
 
         //may need locking
         public bool IsGrowthStateTriggered(DateTime now) //tested

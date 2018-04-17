@@ -23,6 +23,9 @@ namespace SynapseModel3
         private static List<InputAxon> inputs;
         private static int nextInputAxonId;
         private static CancellationTokenSource cts = new CancellationTokenSource();
+        private static int nextCellBodyTaskId = 0;
+        private static int nextDendriteTaskId = 0;
+        private static int nextInputAxonTaskId = 0;
 
         public static void Main()
         {
@@ -41,7 +44,7 @@ namespace SynapseModel3
             neuron = new Neuron(10,             //*cell body decay frequency
                                 50,             //*cell body restore increment
                                 window,         //*neuron secondary messenger window
-                                2,              //*neuron secondary messenger frequency trigger
+                                200,              //*neuron secondary messenger frequency trigger
                                 1,              //*number of dendrites to add in growth event
                                 new int[]{0},   //*types of dendrites to add in growth event
                                 10,             //*dendrite decay frequency
@@ -51,7 +54,7 @@ namespace SynapseModel3
                                 window,         //*dendrite secondary messenger window
                                 2,              //*dendrite secondary messenger frequency trigger
                                 2,              //*number of starting synapses per dendrite
-                                50,            //*dendrite significant voltage change amount
+                                30,              //*dendrite significant voltage change amount //at 25, too frequent; at 26, no occurrence
                                 1,              //*number of starting dendrites
                                 new int[]{0});  //*types of dendrites to start
             
@@ -82,7 +85,7 @@ namespace SynapseModel3
                 {
                     int id = (int)val;
                     new Task_CellBody(id, runLength, neuron.Body).Consume();
-                }, i);
+                }, nextCellBodyTaskId++);
                 tasks.Add(newest);
             }
 
@@ -93,7 +96,7 @@ namespace SynapseModel3
                 {
                     int id = (int)val;
                     new Task_CellBody(id, runLength, neuron.Body).Decay();
-                }, i);
+                }, nextCellBodyTaskId++);
                 tasks.Add(newest);
             }
 
@@ -107,7 +110,7 @@ namespace SynapseModel3
                 {
                     int id = (int)val;
                     new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body).Consume();
-                }, i);
+                }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
 
@@ -118,7 +121,7 @@ namespace SynapseModel3
                 {
                     int id = (int)val;
                     new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body).Produce();
-                }, i);
+                }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
 
@@ -129,7 +132,7 @@ namespace SynapseModel3
                 {
                     int id = (int)val;
                     new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body).Decay();
-                }, i);
+                }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
 
@@ -147,7 +150,7 @@ namespace SynapseModel3
                     InputAxon axon = new InputAxon(nextInputAxonId++, INPUTAXON_PRODUCTION_FREQUENCY, 0);
                     inputs.Add(axon);
                     new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, neuron.GetDendrite(0)).Produce();
-                }, i);
+                }, nextInputAxonTaskId++);
                 tasks.Add(newest);
             }
 
@@ -175,9 +178,71 @@ namespace SynapseModel3
             }
         }
 
-        private static void RespondToCellGrowthEvent(object sender, EventArgs_CellGrowth e){
-            //to be implemented
+        private static void RespondToCellGrowthEvent(object sender, EventArgs_CellGrowth e)
+        {
+            
             Console.WriteLine("ProcessManager received cell growth event.");
+            List<Dendrite> added = e.DendritesAdded;
+
+            //add Tasks to manipulate dendrites added
+            //====================================================================//
+            //                             dendrite                               //
+            //====================================================================//
+            //Consumers to retrieve neurotransmitters from dendrite buffer
+            for (int i = 0; i < NUM_DENDRITE_CONSUMERS; i++)
+            {
+                Task newest = Task.Factory.StartNew((val) =>
+                {
+                    int id = (int)val;
+                    new Task_Dendrite(id, runLength, added[0], neuron.Body).Consume();
+                }, nextDendriteTaskId++);
+                tasks.Add(newest);
+            }
+
+            //Producers to send electrical potential to cell body buffer
+            for (int i = 0; i < NUM_DENDRITE_PRODUCERS; i++)
+            {
+                Task newest = Task.Factory.StartNew((val) =>
+                {
+                    int id = (int)val;
+                    new Task_Dendrite(id, runLength, added[0], neuron.Body).Produce();
+                }, nextDendriteTaskId++);
+                tasks.Add(newest);
+            }
+
+            //Decayers to decay membrane potential of dendrites
+            for (int i = 0; i < NUM_DENDRITE_DECAYERS; i++)
+            {
+                Task newest = Task.Factory.StartNew((val) =>
+                {
+                    int id = (int)val;
+                    new Task_Dendrite(id, runLength, added[0], neuron.Body).Decay();
+                }, nextDendriteTaskId++);
+                tasks.Add(newest);
+            }
+
+
+
+
+
+            //add Tasks to produce to dendrites added
+            //====================================================================//
+            //                               input                                //
+            //====================================================================//
+            //Producers to send neurotransmitters to dendrites
+            for (int i = 0; i < NUM_INPUTAXON_PRODUCERS; i++)
+            {
+                Task newest = Task.Factory.StartNew((val) =>
+                {
+                    int id = (int)val;
+                    InputAxon axon = new InputAxon(nextInputAxonId++, INPUTAXON_PRODUCTION_FREQUENCY, 0);
+                    inputs.Add(axon);
+                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, added[0]).Produce();
+                }, nextInputAxonTaskId++);
+                tasks.Add(newest);
+            }
+
+
         }
 
         private static void RespondToDendriteGrowthEvent(object sender, EventArgs_DendriteGrowth eventArgs){
