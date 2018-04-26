@@ -9,16 +9,18 @@ namespace SynapseModel3
         private CellBody body;
         private int id;
         private TimeSpan runLength;
+        private DateTime start;
 
 
         //constructors
-        public Task_CellBody(int id, TimeSpan runLength, CellBody body) //tested
+        public Task_CellBody(int id, TimeSpan runLength, CellBody body, DateTime start) //tested
         {
             Console.WriteLine("Task_CellBody " + id + " is created.");
 
             this.id = id;
             this.runLength = runLength;
             this.body = body;
+            this.start = start;
         }
 
 
@@ -54,7 +56,6 @@ namespace SynapseModel3
         //public methods
         public void Consume() //tested
         {
-            DateTime start = DateTime.Now;
             Console.WriteLine("Task_CellBody {0} is consuming...", Id);
 
             while (DateTime.Now - start < runLength)
@@ -68,7 +69,6 @@ namespace SynapseModel3
 
         public void Decay() //tested
         {
-            DateTime start = DateTime.Now;
             Console.WriteLine("Task_CellBody {0} is decaying...", Id);
             while (DateTime.Now - start < runLength)
             {

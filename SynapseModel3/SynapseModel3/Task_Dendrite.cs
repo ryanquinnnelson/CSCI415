@@ -10,10 +10,11 @@ namespace SynapseModel3
         private Dendrite dendrite;
         private int id;
         private TimeSpan runLength;
+        private DateTime start;
 
 
         //constructors
-        public Task_Dendrite(int id, TimeSpan runLength, Dendrite dendrite, CellBody body) //tested
+        public Task_Dendrite(int id, TimeSpan runLength, Dendrite dendrite, CellBody body, DateTime start) //tested
         {
             Console.WriteLine("Task_Dendrite " + id + " is created.");
 
@@ -21,6 +22,7 @@ namespace SynapseModel3
             this.dendrite = dendrite;
             this.runLength = runLength;
             this.body = body;
+            this.start = start;
         }
 
 
@@ -65,7 +67,6 @@ namespace SynapseModel3
         //public methods
         public void Consume() //tested
         {
-            DateTime start = DateTime.Now;
             Console.WriteLine("Task_Dendrite {0} is consuming...", Id);
             while (DateTime.Now - start < runLength)
             {
@@ -78,7 +79,6 @@ namespace SynapseModel3
 
         public void Decay() //tested
         {
-            DateTime start = DateTime.Now;
             Console.WriteLine("Task_Dendrite {0} is decaying...", Id);
             while (DateTime.Now - start < runLength)
             {
@@ -91,7 +91,6 @@ namespace SynapseModel3
 
         public void Produce() //tested
         {
-            DateTime start = DateTime.Now;
             Console.WriteLine("Task_Dendrite {0} is producing...", Id);
             while (DateTime.Now - start < runLength)
             {

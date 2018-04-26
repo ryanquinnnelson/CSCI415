@@ -11,9 +11,10 @@ namespace SynapseModel3
         private int id;
         private TimeSpan runLength;
         private int neurotransmitterMagnitude;
+        private DateTime start;
 
         //constructors
-        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, int magnitude, Dendrite dendrite) //tested
+        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, int magnitude, DateTime start, Dendrite dendrite) //tested
         {
             Console.WriteLine("Task_AxonInput " + id + " is created.");
             this.id = id;
@@ -21,6 +22,7 @@ namespace SynapseModel3
             bool success = dendrite.TryConnect(axon);
             this.axon = axon;
             this.neurotransmitterMagnitude = magnitude;
+            this.start = start;
 
             if (success)
             {
@@ -28,14 +30,15 @@ namespace SynapseModel3
             }
         }
 
-        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, int magnitude) //tested
+        public Task_InputAxon(int id, TimeSpan runLength, InputAxon axon, int magnitude, DateTime start) //tested
         {
-            Console.WriteLine("Task_AxonInput " + id + " is created.");
+            Console.WriteLine("Task_InputAxon " + id + " is created.");
             this.id = id;
             this.runLength = runLength;
             this.dendrite = null;
             this.axon = axon;
             this.neurotransmitterMagnitude = magnitude;
+            this.start = start;
         }
 
 
@@ -99,7 +102,6 @@ namespace SynapseModel3
                 return; //nothing to produce to
             }
 
-            DateTime start = DateTime.Now;
             Console.WriteLine("Task_InputAxon {0} is producing...", Id);
             while (DateTime.Now - start < runLength)
             {
