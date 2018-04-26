@@ -44,7 +44,7 @@ namespace SynapseModel3
             neuron = new Neuron(10,             //*cell body decay frequency
                                 50,             //*cell body restore increment
                                 window,         //*neuron secondary messenger window
-                                200,              //*neuron secondary messenger frequency trigger
+                                1,              //*neuron secondary messenger frequency trigger
                                 1,              //*number of dendrites to add in growth event
                                 new int[] { 0 },   //*types of dendrites to add in growth event
                                 10,             //*dendrite decay frequency
@@ -85,7 +85,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_CellBody(id, runLength, neuron.Body).Consume();
+                    new Task_CellBody(id, runLength, neuron.Body, start).Consume();
                 }, nextCellBodyTaskId++);
                 tasks.Add(newest);
             }
@@ -96,7 +96,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_CellBody(id, runLength, neuron.Body).Decay();
+                    new Task_CellBody(id, runLength, neuron.Body, start).Decay();
                 }, nextCellBodyTaskId++);
                 tasks.Add(newest);
             }
@@ -110,7 +110,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body).Consume();
+                    new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body, start).Consume();
                 }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
@@ -121,7 +121,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body).Produce();
+                    new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body, start).Produce();
                 }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
@@ -132,7 +132,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body).Decay();
+                    new Task_Dendrite(id, runLength, neuron.GetDendrite(0), neuron.Body, start).Decay();
                 }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
@@ -150,7 +150,7 @@ namespace SynapseModel3
                     int id = (int)val;
                     InputAxon axon = new InputAxon(nextInputAxonId++, INPUTAXON_PRODUCTION_FREQUENCY, 0);
                     inputs.Add(axon);
-                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, neuron.GetDendrite(0)).Produce();
+                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, start, neuron.GetDendrite(0)).Produce();
                 }, nextInputAxonTaskId++);
                 tasks.Add(newest);
             }
@@ -196,7 +196,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, runLength, added[0], neuron.Body).Consume();
+                    new Task_Dendrite(id, runLength, added[0], neuron.Body, start).Consume();
                 }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
@@ -207,7 +207,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, runLength, added[0], neuron.Body).Produce();
+                    new Task_Dendrite(id, runLength, added[0], neuron.Body, start).Produce();
                 }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
@@ -218,7 +218,7 @@ namespace SynapseModel3
                 Task newest = Task.Factory.StartNew((val) =>
                 {
                     int id = (int)val;
-                    new Task_Dendrite(id, runLength, added[0], neuron.Body).Decay();
+                    new Task_Dendrite(id, runLength, added[0], neuron.Body, start).Decay();
                 }, nextDendriteTaskId++);
                 tasks.Add(newest);
             }
@@ -239,7 +239,7 @@ namespace SynapseModel3
                     int id = (int)val;
                     InputAxon axon = new InputAxon(nextInputAxonId++, INPUTAXON_PRODUCTION_FREQUENCY, 0);
                     inputs.Add(axon);
-                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, added[0]).Produce();
+                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, start, added[0]).Produce();
                 }, nextInputAxonTaskId++);
                 tasks.Add(newest);
             }
@@ -265,7 +265,7 @@ namespace SynapseModel3
                     int id = (int)val;
                     InputAxon axon = new InputAxon(nextInputAxonId++, INPUTAXON_PRODUCTION_FREQUENCY, 0);
                     inputs.Add(axon);
-                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE).ConnectAndProduce(neuron);
+                    new Task_InputAxon(id, runLength, axon, INPUT_MAGNITUDE, start).ConnectAndProduce(neuron);
                 }, nextInputAxonTaskId++);
                 tasks.Add(newest);
             }
