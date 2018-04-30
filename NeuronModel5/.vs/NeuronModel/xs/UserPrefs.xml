@@ -1,0 +1,14 @@
+﻿<Properties StartupConfiguration="{21532191-71A9-4BC2-A02D-1E3432E07305}|Default">
+  <MonoDevelop.Ide.ItemProperties.NeuronModel PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="NeuronModel/Form1.cs">
+    <Files>
+      <File FileName="NeuronModel/Form1.cs" Line="21" Column="42" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>
