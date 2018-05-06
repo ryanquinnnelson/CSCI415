@@ -177,10 +177,6 @@ namespace NeuronModel
             }
 
 
-            //currently if any consumers are trying to consume an empty buffer, they block the entire program??
-
-
-
             Task.WaitAll(tasks.ToArray(), cts.Token);
 
             //output results
