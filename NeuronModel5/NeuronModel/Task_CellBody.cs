@@ -72,7 +72,7 @@ namespace NeuronModel
             Console.WriteLine("Task_CellBody {0} is decaying...", Id);
             while (DateTime.Now - start < runLength)
             {
-                Thread.Sleep(body.DecayFrequency);
+                Thread.Sleep(body.DecayFrequency); //simulate biology speed
                 body.DecayMembranePotential();
                 //Console.WriteLine("Task_CellBody {0} decayed cell body membrane potential to {1}.", Id, body.MembranePotential);
             }

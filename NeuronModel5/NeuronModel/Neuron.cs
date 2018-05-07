@@ -118,7 +118,7 @@ namespace NeuronModel
         //public methods
         public Dendrite GetDendrite(int id) //tested
         {
-            Dendrite result = dendrites.GetOrAdd(id, (key) => null);
+            Dendrite result = dendrites.GetOrAdd(id, (key) => null); //if id doesn't exist, add it as a key with the value NULL
             return result;
         }
 
