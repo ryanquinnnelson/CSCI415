@@ -83,7 +83,7 @@ namespace NeuronModel
             Console.WriteLine("Task_Dendrite {0} is decaying...", Id);
             while (DateTime.Now - start < runLength)
             {
-                Thread.Sleep(dendrite.DecayFrequency);
+                Thread.Sleep(dendrite.DecayFrequency); //simulate biology speed
                 dendrite.DecayMembranePotential();
                 //Console.WriteLine("Task_Dendrite {0} decayed dendrite membrane potential to {1}.", Id, dendrite.MembranePotential);
             }
@@ -95,7 +95,7 @@ namespace NeuronModel
             Console.WriteLine("Task_Dendrite {0} is producing...", Id);
             while (DateTime.Now - start < runLength)
             {
-                Thread.Sleep(dendrite.ProductionFrequency);
+                Thread.Sleep(dendrite.ProductionFrequency); //simulate biology speed
                 int difference = dendrite.GetMembranePotentialDifference();
                 body.AddToBuffer(difference);
 

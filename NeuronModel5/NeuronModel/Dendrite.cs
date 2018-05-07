@@ -187,6 +187,7 @@ namespace NeuronModel
             if (numAvailableSynapses > 0)
             {
                 //atomically try to form a connection
+                //If key exists, update with original value to prevent changes
                 InputAxon result = synapses.AddOrUpdate(axon.Id, axon, (key, oldValue) => oldValue);
                 if (result.Equals(axon))
                 {

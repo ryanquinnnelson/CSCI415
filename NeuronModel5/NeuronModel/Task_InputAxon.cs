@@ -105,7 +105,7 @@ namespace NeuronModel
             Console.WriteLine("Task_InputAxon {0} is producing...", Id);
             while (DateTime.Now - start < runLength)
             {
-                Thread.Sleep(axon.ProductionFrequency);
+                Thread.Sleep(axon.ProductionFrequency); //simulate biology speed
                 Neurotransmitter newest = new Neurotransmitter(neurotransmitterMagnitude);
                 dendrite.AddToBuffer(newest);
 
