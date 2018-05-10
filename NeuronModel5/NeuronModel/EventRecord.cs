@@ -1,4 +1,7 @@
-﻿using System;
+﻿//Ryan Nelson and Brian Engelbrecht
+
+using System;
+
 namespace NeuronModel
 {
     public class EventRecord : IComparable<EventRecord>

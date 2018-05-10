@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Ryan Nelson and Brian Engelbrecht
+using System;
+
 namespace NeuronModel
 {
     public class EventArgs_ActionPotential : EventArgs
