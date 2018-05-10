@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Ryan Nelson and Brian Engelbrecht
+
+using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Collections.Generic;

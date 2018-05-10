@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Ryan Nelson and Brian Engelbrecht
+
+using System;
 using System.Threading;
 
 namespace NeuronModel

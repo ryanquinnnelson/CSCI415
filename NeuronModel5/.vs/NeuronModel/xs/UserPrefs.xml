@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{21532191-71A9-4BC2-A02D-1E3432E07305}|Default">
   <MonoDevelop.Ide.ItemProperties.NeuronModel PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="NeuronModel/Form1.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="NeuronModel/Neuron.cs">
     <Files>
-      <File FileName="NeuronModel/Form1.cs" Line="179" Column="13" />
+      <File FileName="NeuronModel/Neuron.cs" Line="4" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
